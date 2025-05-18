@@ -1,0 +1,113 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="container py-5">
+        <h1 class="mb-4">Browse Movies & TV Shows</h1>
+
+        <!-- Filter section -->
+        <div class="filter-section">
+            <form id="filterForm" class="filter-form">
+                <div class="row g-3">
+                    <div class="col-md-2 col-6">
+                        <label for="typeFilter" class="form-label">Type</label>
+                        <select class="form-select" id="typeFilter">
+                            <option value="all">All</option>
+                            <option value="movie">Movies</option>
+                            <option value="tvshow">TV Shows</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <label for="yearFilter" class="form-label">Year</label>
+                        <select class="form-select" id="yearFilter">
+                            <option value="all">All Years</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="older">Before 2020</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <label for="ratingFilter" class="form-label">IMDb Rating</label>
+                        <select class="form-select" id="ratingFilter">
+                            <option value="all">All Ratings</option>
+                            <option value="9">9+</option>
+                            <option value="8">8+</option>
+                            <option value="7">7+</option>
+                            <option value="6">6+</option>
+                            <option value="5">5+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <label for="genreFilter" class="form-label">Genre</label>
+                        <select class="form-select" id="genreFilter">
+                            <option value="all">All Genres</option>
+                            <option value="action">Action</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="comedy">Comedy</option>
+                            <option value="drama">Drama</option>
+                            <option value="fantasy">Fantasy</option>
+                            <option value="horror">Horror</option>
+                            <option value="mystery">Mystery</option>
+                            <option value="romance">Romance</option>
+                            <option value="sci-fi">Sci-Fi</option>
+                            <option value="thriller">Thriller</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-12">
+                        <label for="actorFilter" class="form-label">Actor</label>
+                        <input type="text" class="form-control" id="actorFilter"
+                               placeholder="e.g. Tom Hanks, Emma Stone">
+                    </div>
+                    <div class="col-12 d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" id="resetFilters">Reset</button>
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results section -->
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title">Results</h2>
+                <div class="results-info">
+                    <span id="resultsCount">Showing 30 results</span>
+                </div>
+            </div>
+
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="browseResults">
+                <!-- Media items will be dynamically inserted here -->
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Results pagination" class="mt-5">
+                <ul class="pagination" id="resultsPagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/browse.js' %}"></script>
+{% endblock %}

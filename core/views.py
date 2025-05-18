@@ -7,3 +7,9 @@ class HomeView(View):
         context = {}
 
         return render(request, 'core/home_page.html', context)
+
+
+class BrowseView(View):
+    def get(self, request):
+
+        return render(request, 'core/browse.html')

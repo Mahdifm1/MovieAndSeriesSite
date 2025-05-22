@@ -155,19 +155,22 @@ REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
 # task queues
 CELERY_TASK_QUEUES = {
     'default': {
-        'queue': 'default',
-        'exchange': 'direct',
+        'exchange': 'default',
+        'exchange_type': 'direct',
         'routing_key': 'default',
     },
     'movie_and_series_data_sync': {
-        'queue': 'movie_and_series_data_sync',
-        'exchange': 'direct',
+        'exchange': 'movie_and_series_data_sync',
+        'exchange_type': 'direct',
         'routing_key': 'movie_and_series_data_sync',
     }
 }
 
 CELERY_TASK_ROUTES = {
-    'core.tasks.fetch_movie_and_series_data': {
+    'core.tasks.get_and_store_latest_movies': {
+        'queue': 'movie_and_series_data_sync',
+    },
+    'core.tasks.get_and_store_latest_series': {
         'queue': 'movie_and_series_data_sync',
     }
 }

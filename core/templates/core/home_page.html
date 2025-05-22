@@ -321,137 +321,34 @@
                 <div class="carousel-container">
                     <div class="carousel-inner" id="latestCarousel">
                         <!-- Latest release items -->
-                        <div class="carousel-item">
-                            <div class="media-card">
-                                <div class="position-relative">
-                                    <img src="https://upload.wikimedia.org/wikipedia/en/1/1f/Dune_Part_Two_poster.jpg"
-                                         alt="Dune: Part Two" class="media-poster">
-                                    <div class="media-actions">
-                                        <button class="action-btn like-btn" data-id="21" data-type="movie">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
-                                        <button class="action-btn watchlist-btn" data-id="21" data-type="movie">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
+                        {% for movie in latest_movies %}
+                            <div class="carousel-item">
+                                <div class="media-card">
+                                    <div class="position-relative">
+                                        <img src="{{ movie.poster_path }}"
+                                             alt="{{ movie.title }}" class="media-poster">
+                                        <div class="media-actions">
+                                            <button class="action-btn like-btn" data-id="21" data-type="movie">
+                                                <i class="bi bi-heart"></i>
+                                            </button>
+                                            <button class="action-btn watchlist-btn" data-id="21" data-type="movie">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                        </div>
+                                        <span class="badge bg-primary position-absolute"
+                                              style="top: 10px; left: 10px;">NEW</span>
                                     </div>
-                                    <span class="badge bg-primary position-absolute"
-                                          style="top: 10px; left: 10px;">NEW</span>
-                                </div>
-                                <div class="media-info">
-                                    <h3 class="media-title">Dune: Part Two</h3>
-                                    <div class="media-rating">
-                                        <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                        <span>4.8</span>
+                                    <div class="media-info">
+                                        <h3 class="media-title">{{ movie.title }}</h3>
+                                        <div class="media-rating">
+                                            <span class="rating-star"><i class="bi bi-star-fill"></i></span>
+                                            <span>4.8</span>
+                                        </div>
+                                        <div class="media-year">2024</div>
                                     </div>
-                                    <div class="media-year">2024</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="media-card">
-                                <div class="position-relative">
-                                    <img src="https://upload.wikimedia.org/wikipedia/en/e/e0/The_Last_of_Us_season_1.jpg"
-                                         alt="The Last of Us" class="media-poster">
-                                    <div class="media-actions">
-                                        <button class="action-btn like-btn" data-id="121" data-type="tvshow">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
-                                        <button class="action-btn watchlist-btn" data-id="121" data-type="tvshow">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
-                                    </div>
-                                    <span class="badge bg-primary position-absolute"
-                                          style="top: 10px; left: 10px;">NEW</span>
-                                </div>
-                                <div class="media-info">
-                                    <h3 class="media-title">The Last of Us</h3>
-                                    <div class="media-rating">
-                                        <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                        <span>4.9</span>
-                                    </div>
-                                    <div class="media-year">2023</div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="media-card">
-                                <div class="position-relative">
-                                    <img src="https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg"
-                                         alt="Oppenheimer" class="media-poster">
-                                    <div class="media-actions">
-                                        <button class="action-btn like-btn" data-id="22" data-type="movie">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
-                                        <button class="action-btn watchlist-btn" data-id="22" data-type="movie">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
-                                    </div>
-                                    <span class="badge bg-primary position-absolute"
-                                          style="top: 10px; left: 10px;">NEW</span>
-                                </div>
-                                <div class="media-info">
-                                    <h3 class="media-title">Oppenheimer</h3>
-                                    <div class="media-rating">
-                                        <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                        <span>4.7</span>
-                                    </div>
-                                    <div class="media-year">2023</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="media-card">
-                                <div class="position-relative">
-                                    <img src="https://upload.wikimedia.org/wikipedia/en/b/b9/House_of_the_Dragon_S1_Teaser_Poster.jpg"
-                                         alt="House of the Dragon" class="media-poster">
-                                    <div class="media-actions">
-                                        <button class="action-btn like-btn" data-id="122" data-type="tvshow">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
-                                        <button class="action-btn watchlist-btn" data-id="122" data-type="tvshow">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
-                                    </div>
-                                    <span class="badge bg-primary position-absolute"
-                                          style="top: 10px; left: 10px;">NEW</span>
-                                </div>
-                                <div class="media-info">
-                                    <h3 class="media-title">House of the Dragon</h3>
-                                    <div class="media-rating">
-                                        <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                        <span>4.6</span>
-                                    </div>
-                                    <div class="media-year">2022</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="media-card">
-                                <div class="position-relative">
-                                    <img src="https://upload.wikimedia.org/wikipedia/en/3/32/Poor_Things_%28film%29_poster.jpg"
-                                         alt="Poor Things" class="media-poster">
-                                    <div class="media-actions">
-
-                                        <button class="action-btn like-btn" data-id="23" data-type="movie">
-                                            <i class="bi bi-heart"></i>
-                                        </button>
-                                        <button class="action-btn watchlist-btn" data-id="23" data-type="movie">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
-                                    </div>
-                                    <span class="badge bg-primary position-absolute"
-                                          style="top: 10px; left: 10px;">NEW</span>
-                                </div>
-                                <div class="media-info">
-                                    <h3 class="media-title">Poor Things</h3>
-                                    <div class="media-rating">
-                                        <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                        <span>4.5</span>
-                                    </div>
-                                    <div class="media-year">2023</div>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
                 <button class="carousel-control next" id="latestCarouselNext">
@@ -767,5 +664,5 @@
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/carousel.js' %}"></script>
     <script src="{% static 'js/ai-discovery-feature.js' %}"></script>
-    <script src="{% static 'js/fixed-image-display.js' %}"></script>
+{#    <script src="{% static 'js/fixed-image-display.js' %}"></script>#}
 {% endblock %}

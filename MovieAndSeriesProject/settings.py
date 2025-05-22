@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
 from pathlib import Path
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -127,3 +127,57 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# celery configs
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://localhost:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# redis config
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 1
+REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'
+
+# task queues
+CELERY_TASK_QUEUES = {
+    'default': {
+        'queue': 'default',
+        'exchange': 'direct',
+        'routing_key': 'default',
+    },
+    'movie_and_series_data_sync': {
+        'queue': 'movie_and_series_data_sync',
+        'exchange': 'direct',
+        'routing_key': 'movie_and_series_data_sync',
+    }
+}
+
+CELERY_TASK_ROUTES = {
+    'core.tasks.fetch_movie_and_series_data': {
+        'queue': 'movie_and_series_data_sync',
+    }
+}
+
+# environment variables
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+env.read_env(env_file=str(BASE_DIR / '.env'))
+print(BASE_DIR / '.env')
+
+TMDB_API_KEY = env('TMDB_API_KEY')
+ANOTHER_SECRET = env('ANOTHER_SECRET')

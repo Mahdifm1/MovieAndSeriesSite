@@ -167,10 +167,10 @@ CELERY_TASK_QUEUES = {
 }
 
 CELERY_TASK_ROUTES = {
-    'core.tasks.get_and_store_latest_movies': {
+    'core.tasks.get_and_store_latest_movies_and_series_task': {
         'queue': 'movie_and_series_data_sync',
     },
-    'core.tasks.get_and_store_latest_series': {
+    'core.tasks.get_trending_movies_and_series_task': {
         'queue': 'movie_and_series_data_sync',
     }
 }

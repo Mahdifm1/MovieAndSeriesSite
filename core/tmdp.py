@@ -24,7 +24,8 @@ def get_latest_movie_series_list(v_type, page=1):
         processed = {
             'id': latest.get('id'),
             'title': latest.get('title') if latest.get('title') else latest.get('name'),
-            'release_date': latest.get('release_date') if not latest.get('release_date') else latest.get('first_air_date'),
+            'release_date': latest.get('release_date') if not latest.get('release_date') else latest.get(
+                'first_air_date'),
             'backdrop_path': f"https://image.tmdb.org/t/p/w342/{latest.get('backdrop_path')}",
             'poster_path': f"https://image.tmdb.org/t/p/w780/{latest.get('poster_path')}",
             'genre_ids': latest.get('genre_ids'),
@@ -50,10 +51,6 @@ def get_latest_movies_list(page=1):
 
 def get_latest_series_list(page=1):
     return get_latest_movie_series_list(page=page, v_type="tv")
-
-
-def get_filtered_movies_and_series():
-    pass
 
 
 def get_trending_movies_and_series():
@@ -84,6 +81,96 @@ def get_trending_movies_and_series():
 
     response_dict = {
         "results": processed_list,
+        "current_page": response.json().get('page'),
+        "total_pages": response.json().get('total_pages'),
+        "total_results": response.json().get('total_results')
+    }
+
+    return response_dict
+
+
+def get_actor_id_by_name(name):
+    url = f"https://api.themoviedb.org/3/search/person?query={name}&page=1"
+    response = requests.get(url, headers=headers)
+
+    if not response.status_code == 200:
+        return response.raise_for_status()
+
+    persons_list = response.json().get('results')[:10]
+    persons_list_str = ''
+    for person in persons_list:
+        persons_list_str += f"{person.get('id')}|"
+
+    if persons_list_str == '':
+        return None
+    return persons_list_str
+
+
+def get_genre_id_by_name(v_type, name):
+    url = f"https://api.themoviedb.org/3/genre/{v_type}/list"
+    response = requests.get(url, headers=headers)
+
+    if not response.status_code == 200:
+        return response.raise_for_status()
+
+    genre_list = response.json().get('genres')
+    for genre in genre_list:
+        if genre.get('name') == name:
+            return genre.get('id')
+
+    return None
+
+
+def get_filtered_movies_and_series(page=1, actor=None, v_type='movie', year='all', rating='all', genre='all'):
+    url = f"https://api.themoviedb.org/3/discover/{v_type}?sort_by=popularity.desc&page={page}&vote_average.gte={rating}"
+
+    if year == 'older':
+        url += f"&primary_release_date.lte=2020-01-01"
+    else:
+        url += f"&primary_release_year={year}"
+
+    if actor:
+        actor_id = get_actor_id_by_name(actor)
+        if actor_id:
+            url += f"&with_cast={actor_id}"
+        else:
+            response_dict = {
+                "results": [],
+                "current_page": 1,
+                "total_pages": 1,
+                "total_results": 0
+            }
+            return response_dict
+
+    if genre is not 'all':
+        genre_id = get_genre_id_by_name(v_type, genre)
+        if genre_id is not None:
+            url += f"&genre_ids={genre_id}"
+
+    response = requests.get(url, headers=headers)
+    if not response.status_code == 200:
+        return response.raise_for_status()
+
+    response_dict = response.json().get('results')
+    filtered_list = []
+    for filtered in response_dict:
+        item = {
+            "id": filtered.get('id'),
+            "title": filtered.get('title') if filtered.get('title') else filtered.get("name"),
+            "release_date": filtered.get('release_date') if filtered.get('release_date') else filtered.get(
+                'first_air_date'),
+            "backdrop_path": f"https://image.tmdb.org/t/p/w342/{filtered.get('backdrop_path')}",
+            "poster_path": f"https://image.tmdb.org/t/p/w780/{filtered.get('poster_path')}",
+            "genre_ids": filtered.get('genre_ids'),
+            "language": filtered.get('original_language') if filtered.get('original_language') else filtered.get(
+                'language'),
+            "overview": filtered.get('overview'),
+            "tmdb_rating": filtered.get('vote_average')
+        }
+        filtered_list.append(item)
+
+    response_dict = {
+        "results": filtered_list,
         "current_page": response.json().get('page'),
         "total_pages": response.json().get('total_pages'),
         "total_results": response.json().get('total_results')

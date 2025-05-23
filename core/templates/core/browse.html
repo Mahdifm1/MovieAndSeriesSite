@@ -8,63 +8,110 @@
 
         <!-- Filter section -->
         <div class="filter-section">
-            <form id="filterForm" class="filter-form">
+            <form id="filterForm" class="filter-form" method="get">
                 <div class="row g-3">
                     <div class="col-md-2 col-6">
                         <label for="typeFilter" class="form-label">Type</label>
-                        <select class="form-select" id="typeFilter">
-                            <option value="all">All</option>
-                            <option value="movie">Movies</option>
-                            <option value="tvshow">TV Shows</option>
+                        <select name="v_type" class="form-select" id="typeFilter">
+                            <option {% if query_params.v_type == 'movies' %}selected{% endif %} value="movie">Movies
+                            </option>
+                            <option {% if query_params.v_type == 'tv' %}selected{% endif %} value="tv">TV Shows</option>
                         </select>
                     </div>
                     <div class="col-md-2 col-6">
                         <label for="yearFilter" class="form-label">Year</label>
-                        <select class="form-select" id="yearFilter">
-                            <option value="all">All Years</option>
-                            <option value="2025">2025</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
-                            <option value="older">Before 2020</option>
+                        <select name="year" class="form-select" id="yearFilter">
+                            <option {% if query_params.year == 'all' or None %}selected{% endif %} value="all">All
+                                Years
+                            </option>
+                            <option {% if query_params.year == '2025' %}selected{% endif %} value="2025">2025</option>
+                            <option {% if query_params.year == '2024' %}selected{% endif %} value="2024">2024</option>
+                            <option {% if query_params.year == '2023' %}selected{% endif %} value="2023">2023</option>
+                            <option {% if query_params.year == '2022' %}selected{% endif %} value="2022">2022</option>
+                            <option {% if query_params.year == '2021' %}selected{% endif %} value="2021">2021</option>
+                            <option {% if query_params.year == '2020' %}selected{% endif %} value="2020">2020</option>
+                            <option {% if query_params.year == 'older' %}selected{% endif %} value="older">Before 2020
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-2 col-6">
                         <label for="ratingFilter" class="form-label">IMDb Rating</label>
-                        <select class="form-select" id="ratingFilter">
-                            <option value="all">All Ratings</option>
-                            <option value="9">9+</option>
-                            <option value="8">8+</option>
-                            <option value="7">7+</option>
-                            <option value="6">6+</option>
-                            <option value="5">5+</option>
+                        <select name="rating" class="form-select" id="ratingFilter">
+                            <option {% if query_params.rating == 'all' or None %}selected{% endif %} value="all">All
+                                Ratings
+                            </option>
+                            <option {% if query_params.rating == '9' %}selected{% endif %} value="9">9+</option>
+                            <option {% if query_params.rating == '8' %}selected{% endif %} value="8">8+</option>
+                            <option {% if query_params.rating == '7' %}selected{% endif %} value="7">7+</option>
+                            <option {% if query_params.rating == '6' %}selected{% endif %} value="6">6+</option>
+                            <option {% if query_params.rating == '5' %}selected{% endif %} value="5">5+</option>
+                            <option {% if query_params.rating == '4' %}selected{% endif %} value="5">4+</option>
                         </select>
                     </div>
                     <div class="col-md-2 col-6">
                         <label for="genreFilter" class="form-label">Genre</label>
-                        <select class="form-select" id="genreFilter">
-                            <option value="all">All Genres</option>
-                            <option value="action">Action</option>
-                            <option value="adventure">Adventure</option>
-                            <option value="comedy">Comedy</option>
-                            <option value="drama">Drama</option>
-                            <option value="fantasy">Fantasy</option>
-                            <option value="horror">Horror</option>
-                            <option value="mystery">Mystery</option>
-                            <option value="romance">Romance</option>
-                            <option value="sci-fi">Sci-Fi</option>
-                            <option value="thriller">Thriller</option>
+                        <select name="genre" class="form-select" id="genreFilter">
+                            <option {% if query_params.genre == 'all' or None %}selected{% endif %} value="all">All
+                                Genres
+                            </option>
+                            <option {% if query_params.genre == 'action' %}selected{% endif %} value="action">Action
+                            </option>
+                            <option {% if query_params.genre == 'adventure' %}selected{% endif %} value="adventure">
+                                Adventure
+                            </option>
+                            <option {% if query_params.genre == 'comedy' %}selected{% endif %} value="comedy">Comedy
+                            </option>
+                            <option {% if query_params.genre == 'drama' %}selected{% endif %} value="drama">Drama
+                            </option>
+                            <option {% if query_params.genre == 'fantasy' %}selected{% endif %} value="fantasy">
+                                Fantasy
+                            </option>
+                            <option {% if query_params.genre == 'horror' %}selected{% endif %} value="horror">Horror
+                            </option>
+                            <option {% if query_params.genre == 'mystery' %}selected{% endif %} value="mystery">
+                                Mystery
+                            </option>
+                            <option {% if query_params.genre == 'romance' %}selected{% endif %} value="romance">
+                                Romance
+                            </option>
+                            <option {% if query_params.genre == 'thriller' %}selected{% endif %} value="thriller">
+                                Thriller
+                            </option>
+                            <option {% if query_params.genre == 'animation' %}selected{% endif %} value="animation">
+                                Animation
+                            </option>
+                            <option {% if query_params.genre == 'crime' %}selected{% endif %} value="crime">Crime
+                            </option>
+                            <option {% if query_params.genre == 'documentary' %}selected{% endif %} value="documentary">
+                                Documentary
+                            </option>
+                            <option {% if query_params.genre == 'family' %}selected{% endif %} value="family">Family
+                            </option>
+                            <option {% if query_params.genre == 'history' %}selected{% endif %} value="history">
+                                History
+                            </option>
+                            <option {% if query_params.genre == 'music' %}selected{% endif %} value="music">Music
+                            </option>
+                            <option {% if query_params.genre == 'science_fiction' %}selected{% endif %}
+                                    value="science_fiction">Science Fiction
+                            </option>
+                            <option {% if query_params.genre == 'war' %}selected{% endif %} value="war">War</option>
+                            <option {% if query_params.genre == 'western' %}selected{% endif %} value="western">
+                                Western
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-4 col-12">
                         <label for="actorFilter" class="form-label">Actor</label>
-                        <input type="text" class="form-control" id="actorFilter"
-                               placeholder="e.g. Tom Hanks, Emma Stone">
+                        <input name="actor" type="text" class="form-control" id="actorFilter"
+                               placeholder="search by actors name"
+                                {% if query_params.actor != None %}
+                               value="{{ query_params.actor }}"
+                                {% endif %}
+                        >
                     </div>
                     <div class="col-12 d-flex justify-content-end mt-4">
-                        <button type="button" class="btn btn-secondary me-2" id="resetFilters">Reset</button>
+                        <button type="button" class="btn btn-secondary me-2">Reset</button>
                         <button type="submit" class="btn btn-primary">Apply Filters</button>
                     </div>
                 </div>
@@ -76,12 +123,39 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="section-title">Results</h2>
                 <div class="results-info">
-                    <span id="resultsCount">Showing 30 results</span>
+                    <span id="resultsCount">Showing {{ filtered_movie_and_series_list.results|length }} results</span>
                 </div>
             </div>
 
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="browseResults">
-                <!-- Media items will be dynamically inserted here -->
+                {% for filtered in filtered_movie_and_series_list.results %}
+                    <div class="media-card">
+                        <div class="position-relative">
+                            <img src="{{ filtered.poster_path }}" alt="{{ filtered.title }}" class="media-poster"
+                                 onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';">
+                            <div class="media-actions">
+                                <button class="action-btn like-btn" data-id="{{ filtered.id }}" data-type="">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="action-btn watchlist-btn" data-id="{{ filtered }}" data-type="">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                            {% if filtered.release_date|slice:":4" == '2025' %}
+                                <span class="badge bg-primary position-absolute"
+                                      style="top: 10px; left: 10px;">NEW</span>
+                            {% endif %}
+                        </div>
+                        <div class="media-info">
+                            <h3 class="media-title">{{ filtered.title }}</h3>
+                            <div class="media-rating">
+                                <span class="rating-star"><i class="bi bi-star-fill"></i></span>
+                                <span>{{ filtered.tmdb_rating }}</span>
+                            </div>
+                            <div class="media-year">{{ filtered.release_date|slice:":4" }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
 
             <!-- Pagination -->
@@ -104,10 +178,4 @@
             </nav>
         </div>
     </div>
-{% endblock %}
-
-{% block scripts %}
-    <!-- Scripts -->
-    <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/browse.js' %}"></script>
 {% endblock %}

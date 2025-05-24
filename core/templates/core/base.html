@@ -24,13 +24,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'home_page' %}active{% endif %}" href="/">Home</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home_page' %}active{% endif %}" href="{% url 'home_page' %}">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'brows_page' %}active{% endif %}" href="{% url 'brows_page' %}">Browse</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link{% if request.resolver_match.url_name == 'actors_page' %}active{% endif %} " href="/actors">Actors</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'actors_page' %}active{% endif %} " href="{% url 'actors_page' %}">Actors</a>
                 </li>
             </ul>
             <div class="d-flex align-items-center">

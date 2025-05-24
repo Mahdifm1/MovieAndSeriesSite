@@ -6,7 +6,7 @@ from django.views.generic import View
 from django.conf import settings
 import redis
 
-from core.tmdp import get_filtered_movies_and_series
+from core.tmdp import get_filtered_movies_and_series_list, get_filtered_actors_list, get_trending_actors_list
 
 redis_client = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -55,7 +55,7 @@ class BrowseView(View):
                     cleaned_query_params['page'] = value
         context["query_params"] = cleaned_query_params
 
-        filtered_movie_and_series_list = get_filtered_movies_and_series(**cleaned_query_params)
+        filtered_movie_and_series_list = get_filtered_movies_and_series_list(**cleaned_query_params)
         context['filtered_movie_and_series_list'] = filtered_movie_and_series_list.get('results', [])
 
         # get pagination
@@ -71,6 +71,37 @@ class BrowseView(View):
             if index == -1:
                 context['current_query_params'] = ''
             else:
-                context['current_query_params'] = context['current_query_params'][index+1:]
+                context['current_query_params'] = context['current_query_params'][index + 1:]
 
         return render(request, 'core/browse.html', context)
+
+
+class SearchActorsView(View):
+    def get(self, request):
+        context = {}
+
+        actor_name = request.GET.get('name').strip() if request.GET.get('name') else None
+        page = request.GET.get('page').strip() if request.GET.get('page') else '1'
+
+        if actor_name:
+            filtered_actors_list = get_filtered_actors_list(name=actor_name, page=page)
+        else:
+            filtered_actors_list = get_trending_actors_list(page=page)
+
+        context['actors_list'] = filtered_actors_list.get('results', [])
+
+        # get pagination
+        context['current_page'] = filtered_actors_list.get('current_page', 1)
+        context['total_pages'] = filtered_actors_list.get('total_pages', 1)
+        context['total_results'] = filtered_actors_list.get('total_results', 0)
+        context['page_numbers'] = range(1, filtered_actors_list.get('total_pages', 1) + 1)
+
+        context['current_query_params'] = request.GET.urlencode()
+        if context['current_query_params'].startswith('page='):
+            index = context['current_query_params'].find('&')
+            if index == -1:
+                context['current_query_params'] = ''
+            else:
+                context['current_query_params'] = context['current_query_params'][index + 1:]
+
+        return render(request, 'core/actors.html', context=context)

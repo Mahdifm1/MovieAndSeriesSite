@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Main content -->
+    <div class="container py-5">
+        <h1 class="mb-4">Browse Actors List</h1>
+
+        <!-- Filter section -->
+        <div class="filter-section">
+            <form id="filterForm" class="filter-form" method="get">
+                <div class="row g-3">
+                    <div class="col-md-4 col-12">
+                        <label for="actorFilter" class="form-label">Actor Name</label>
+                        <input name="actor" type="text" class="form-control" id="actorFilter"
+                               placeholder="search by actors name"
+                                {% if query_params.actor != None %}
+                               value="{{ query_params.actor }}"
+                                {% endif %}
+                        >
+                    </div>
+                    <div class="col-12 d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2">Reset</button>
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results section -->
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title">Results</h2>
+                <div class="results-info">
+                    <span id="resultsCount">Showing {{ actors_list|length }} results</span>
+                </div>
+            </div>
+
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="browseResults">
+                {% for filtered in actors_list %}
+                    <div class="media-card">
+                        <div class="position-relative">
+                            <img src="{{ filtered.profile_path }}" alt="{{ filtered.name }}" class="media-poster"
+                                 onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';">
+                            <div class="media-actions">
+                                <button class="action-btn like-btn" data-id="{{ filtered.id }}" data-type="">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="action-btn watchlist-btn" data-id="{{ filtered.id }}" data-type="">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="media-info">
+                            <h3 class="media-title">{{ filtered.name }}</h3>
+                            <div class="media-rating">
+                                <span class="rating-star"><i class="bi bi-star-fill"></i></span>
+                                <span>{{ filtered.popularity }}</span>
+                            </div>
+                            <div class="media-year">{{ filtered.gender }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% include 'core/paginator.html' %}
+        </div>
+    </div>
+{% endblock %}

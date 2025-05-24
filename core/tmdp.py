@@ -53,7 +53,7 @@ def get_latest_series_list(page=1):
     return get_latest_movie_series_list(page=page, v_type="tv")
 
 
-def get_trending_movies_and_series():
+def get_trending_movies_and_series_list():
     url = "https://api.themoviedb.org/3/trending/all/day?language=en-US"
     response = requests.get(url, headers=headers)
 
@@ -96,14 +96,14 @@ def get_actor_id_by_name(name):
     if not response.status_code == 200:
         return response.raise_for_status()
 
-    persons_list = response.json().get('results')[:10]
-    persons_list_str = ''
-    for person in persons_list:
-        persons_list_str += f"{person.get('id')}|"
+    actors_list = response.json().get('results')[:10]
+    actors_list_str = ''
+    for actor in actors_list:
+        actors_list_str += f"{actor.get('id')}|"
 
-    if persons_list_str == '':
+    if actors_list_str == '':
         return None
-    return persons_list_str
+    return actors_list_str
 
 
 def get_genre_id_by_name(v_type, name):
@@ -121,7 +121,7 @@ def get_genre_id_by_name(v_type, name):
     return None
 
 
-def get_filtered_movies_and_series(page=1, actor=None, v_type='movie', year='all', rating='all', genre='all'):
+def get_filtered_movies_and_series_list(page=1, actor=None, v_type='movie', year='all', rating='all', genre='all'):
     url = f"https://api.themoviedb.org/3/discover/{v_type}?sort_by=popularity.desc&page={page}&vote_average.gte={rating}"
 
     if year == 'older':
@@ -177,3 +177,69 @@ def get_filtered_movies_and_series(page=1, actor=None, v_type='movie', year='all
     }
 
     return response_dict
+
+
+def get_filtered_actors_list(name=None, page=1):
+    url = f"https://api.themoviedb.org/3/search/person?page={page}"
+    if name:
+        url += f"&query={name}"
+    print(url)
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        return response.raise_for_status()
+
+    actors_list = response.json().get('results')
+    processed_list = clean_actors_list(actors_list)
+
+    response_dict = {
+        "results": processed_list,
+        "current_page": response.json().get('page'),
+        "total_pages": response.json().get('total_pages'),
+        "total_results": response.json().get('total_results')
+    }
+
+    return response_dict
+
+
+def get_trending_actors_list(page=1):
+    url = f"https://api.themoviedb.org/3/trending/person/day?language=en-US"
+    if page:
+        url += f"&page={page}"
+
+    response = requests.get(url, headers=headers)
+    if response.status_code != 200:
+        return response.raise_for_status()
+
+    actors_list = response.json().get('results')
+    processed_list = clean_actors_list(actors_list)
+
+    response_dict = {
+        "results": processed_list,
+        "current_page": response.json().get('page'),
+        "total_pages": response.json().get('total_pages'),
+        "total_results": response.json().get('total_results')
+    }
+
+    return response_dict
+
+
+def clean_actors_list(actors_list):
+    processed_list = []
+    for actor in actors_list:
+        if actor.get('gender') == 2:
+            gender = 'male'
+        elif actor.get('gender') == 1:
+            gender = 'female'
+        else:
+            gender = '-'
+        actors_dict = {
+            "id": actor.get('id'),
+            "name": actor.get('name'),
+            "gender": gender,
+            "popularity": actor.get('popularity'),
+            "profile_path": f"https://image.tmdb.org/t/p/h632/{actor.get('profile_path')}",
+        }
+        processed_list.append(actors_dict)
+
+    return processed_list

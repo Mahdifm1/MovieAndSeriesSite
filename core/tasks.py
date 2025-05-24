@@ -39,7 +39,7 @@ def get_and_store_latest_movies_or_series(v_type):
 @shared_task
 def get_trending_movies_and_series_task():
     # fetch data
-    trending_list = get_trending_movies_and_series().get("results")
+    trending_list = get_trending_movies_and_series_list().get("results")
     redis_trending_key = "trending_movies_and_series"
 
     # remove old data

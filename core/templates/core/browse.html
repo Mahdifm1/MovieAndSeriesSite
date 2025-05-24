@@ -123,12 +123,12 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="section-title">Results</h2>
                 <div class="results-info">
-                    <span id="resultsCount">Showing {{ filtered_movie_and_series_list.results|length }} results</span>
+                    <span id="resultsCount">Showing {{ filtered_movie_and_series_list|length }} results</span>
                 </div>
             </div>
 
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="browseResults">
-                {% for filtered in filtered_movie_and_series_list.results %}
+                {% for filtered in filtered_movie_and_series_list %}
                     <div class="media-card">
                         <div class="position-relative">
                             <img src="{{ filtered.poster_path }}" alt="{{ filtered.title }}" class="media-poster"
@@ -160,21 +160,65 @@
 
             <!-- Pagination -->
             <nav aria-label="Results pagination" class="mt-5">
-                <ul class="pagination" id="resultsPagination">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
+                <ul class="pagination justify-content-center" id="resultsPagination">
+                {# دکمه صفحه قبلی #}
+                <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ current_page|add:'-1' }}{% if current_query_params %}&{{ current_query_params }}{% endif %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                {# لینک‌های صفحات #}
+                {% if total_pages <= 5 %}
+                    {# اگر تعداد صفحات کم است، همه را نمایش بده #}
+                    {% for num in page_numbers %}
+                        <li class="page-item {% if num == current_page %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}{% if current_query_params %}&{{ current_query_params }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    {# اگر تعداد صفحات زیاد است #}
+
+                    {# صفحه 1 #}
+                    <li class="page-item {% if 1 == current_page %}active{% endif %}">
+                        <a class="page-link" href="?page=1{% if current_query_params %}&{{ current_query_params }}{% endif %}">1</a>
                     </li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
+
+                    {% if current_page > 3 %}
+                        {# اگر صفحه فعلی از 3 بیشتر است، سه نقطه را نمایش بده #}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+
+                    {# صفحات میانی: شامل current-1, current, current+1 (فقط اگر خارج از صفحات 1 و آخر نباشند) #}
+                    {% for num in page_numbers %}
+                        {% if num == current_page and num != 1 and num != total_pages %}
+                            <li class="page-item active"><a class="page-link" href="?page={{ num }}{% if current_query_params %}&{{ current_query_params }}{% endif %}">{{ num }}</a></li>
+                        {% elif num == current_page|add:'-1' and num != 1 and num != total_pages %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}{% if current_query_params %}&{{ current_query_params }}{% endif %}">{{ num }}</a></li>
+                        {% elif num == current_page|add:'1' and num != 1 and num != total_pages %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}{% if current_query_params %}&{{ current_query_params }}{% endif %}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if current_page < total_pages|add:'-2' %}
+                        {# اگر صفحه فعلی از total_pages - 2 کمتر است، سه نقطه را نمایش بده #}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+
+                    {# صفحه آخر #}
+                    <li class="page-item {% if total_pages == current_page %}active{% endif %}">
+                        <a class="page-link" href="?page={{ total_pages }}{% if current_query_params %}&{{ current_query_params }}{% endif %}">{{ total_pages }}</a>
                     </li>
-                </ul>
+
+                {% endif %}
+
+                {# دکمه صفحه بعدی #}
+                <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ current_page|add:'1' }}{% if current_query_params %}&{{ current_query_params }}{% endif %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
             </nav>
         </div>
     </div>

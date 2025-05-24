@@ -50,9 +50,27 @@ class BrowseView(View):
                 if value not in ['all', '5', '6', '7', '8', '9']:
                     value = 'all'
                 cleaned_query_params['rating'] = value
+            if key == "page":
+                if int(value) > 0:
+                    cleaned_query_params['page'] = value
         context["query_params"] = cleaned_query_params
 
         filtered_movie_and_series_list = get_filtered_movies_and_series(**cleaned_query_params)
-        context['filtered_movie_and_series_list'] = filtered_movie_and_series_list
+        context['filtered_movie_and_series_list'] = filtered_movie_and_series_list.get('results', [])
+
+        # get pagination
+        context['current_page'] = filtered_movie_and_series_list.get('current_page', 1)
+        context['total_pages'] = filtered_movie_and_series_list.get('total_pages', 1)
+        context['total_results'] = filtered_movie_and_series_list.get('total_results', 0)
+        context['page_numbers'] = range(1, filtered_movie_and_series_list.get('total_pages', 1) + 1)
+
+        # get query params
+        context['current_query_params'] = query_params.urlencode()
+        if context['current_query_params'].startswith('page='):
+            index = context['current_query_params'].find('&')
+            if index == -1:
+                context['current_query_params'] = ''
+            else:
+                context['current_query_params'] = context['current_query_params'][index+1:]
 
         return render(request, 'core/browse.html', context)

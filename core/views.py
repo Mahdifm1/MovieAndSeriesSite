@@ -1,12 +1,17 @@
+import ast
 import json
-from pprint import pprint
+import redis
+import asyncio
+import aiohttp
 
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
 from django.conf import settings
-import redis
 
-from core.tmdp import get_filtered_movies_and_series_list, get_filtered_actors_list, get_trending_actors_list
+from .tmdp_api import get_filtered_movies_and_series_list, get_filtered_actors_list, get_trending_actors_list, \
+    search_tmdb_item_details_async
+from .ai_api import send_prompt_to_ai
 
 redis_client = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -19,7 +24,6 @@ class HomeView(View):
         context['latest_series'] = sorted(json.loads(redis_client.get('latest_series').decode('utf-8')),
                                           key=lambda d: d['tmdb_rating'], reverse=True)[:5]
         context['trending_now'] = json.loads(redis_client.get('trending_movies_and_series'))[:10]
-        pprint(context.get('latest_series'))
 
         return render(request, 'core/home_page.html', context)
 
@@ -105,3 +109,63 @@ class SearchActorsView(View):
                 context['current_query_params'] = context['current_query_params'][index + 1:]
 
         return render(request, 'core/actors.html', context=context)
+
+
+class AiDiscoveryView(View):
+    async def post(self, request):
+        if request.content_type != 'application/json':
+            return JsonResponse({"error": "Invalid Content-Type. Expected application/json."}, status=415)
+
+        try:
+            prompt = json.loads(request.body.decode('utf-8')).get('prompt')
+            print(f"Received prompt from user: {prompt}")
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+
+        if not prompt or not isinstance(prompt, str) or not prompt.strip():
+            return JsonResponse({"error": "Invalid input. Expected JSON string."}, status=400)
+
+        ai_response_string = send_prompt_to_ai(prompt.strip())
+        print(f"Raw response from AI: {ai_response_string}")
+
+        if not ai_response_string:
+            return JsonResponse({"error": "Failed to get response from AI. Please try again later."}, status=502)
+
+        try:
+            ai_suggestions_dict = ast.literal_eval(ai_response_string.strip())
+            if not isinstance(ai_suggestions_dict, dict):
+                raise ValueError("AI response was not a dictionary after parsing.")
+            print(f"Parsed AI suggestions: {ai_suggestions_dict}")  # لاگ کردن دیکشنری پارس شده
+        except (ValueError, SyntaxError) as e:
+            print(f"Error converting AI response string to dictionary: {e}")
+            print(f"AI response string was: {ai_response_string}")
+            return JsonResponse({"error": "AI response format was invalid. Could not parse the suggestions."},
+                                status=502)
+
+        movie_titles_from_ai = ai_suggestions_dict.get('movies', [])
+        series_titles_from_ai = ai_suggestions_dict.get('series', [])
+
+        # make sure we only get 5 item for each movies and series
+        movie_titles_from_ai = movie_titles_from_ai[:5] if isinstance(movie_titles_from_ai, list) else []
+        series_titles_from_ai = series_titles_from_ai[:5] if isinstance(series_titles_from_ai, list) else []
+
+        async with aiohttp.ClientSession() as session:
+            movie_tasks = []
+            for title in movie_titles_from_ai:
+                if isinstance(title, str) and title.strip():
+                    movie_tasks.append(search_tmdb_item_details_async(session, title.strip(), "movie"))
+
+            series_tasks = []
+            for title in series_titles_from_ai:
+                if isinstance(title, str) and title.strip():
+                    series_tasks.append(search_tmdb_item_details_async(session, title.strip(), "tv"))
+
+            movie_results = await asyncio.gather(*movie_tasks)
+            series_results = await asyncio.gather(*series_tasks)
+
+            movies_data = [res for res in movie_results if res is not None]
+            shows_data = [res for res in series_results if res is not None]
+
+        final_response = {"movies": movies_data, "shows": shows_data}
+
+        return JsonResponse(final_response)

@@ -1,6 +1,9 @@
 import requests
 from datetime import date
 from django.conf import settings
+import aiohttp
+import asyncio
+
 
 headers = {
     "accept": "application/json",
@@ -24,8 +27,7 @@ def get_latest_movie_series_list(v_type, page=1):
         processed = {
             'id': latest.get('id'),
             'title': latest.get('title') if latest.get('title') else latest.get('name'),
-            'release_date': latest.get('release_date') if not latest.get('release_date') else latest.get(
-                'first_air_date'),
+            'release_date': latest.get('release_date') if latest.get('release_date') else latest.get('first_air_date'),
             'backdrop_path': f"https://image.tmdb.org/t/p/w342/{latest.get('backdrop_path')}",
             'poster_path': f"https://image.tmdb.org/t/p/w780/{latest.get('poster_path')}",
             'genre_ids': latest.get('genre_ids'),
@@ -67,7 +69,7 @@ def get_trending_movies_and_series_list():
         processed = {
             'id': trend.get('id'),
             'title': trend.get('title') if trend.get('title') else trend.get("name"),
-            'release_date': trend.get('release_date') if trend.get('release_data') else trend.get('first_air_date'),
+            'release_date': trend.get('release_date') if trend.get('release_date') else trend.get('first_air_date'),
             'backdrop_path': f"https://image.tmdb.org/t/p/w342/{trend.get('backdrop_path')}",
             'poster_path': f"https://image.tmdb.org/t/p/w780/{trend.get('poster_path')}",
             'media_type': trend.get('media_type'),
@@ -142,7 +144,7 @@ def get_filtered_movies_and_series_list(page=1, actor=None, v_type='movie', year
             }
             return response_dict
 
-    if genre is not 'all':
+    if genre != 'all':
         genre_id = get_genre_id_by_name(v_type, genre)
         if genre_id is not None:
             url += f"&genre_ids={genre_id}"
@@ -243,3 +245,36 @@ def clean_actors_list(actors_list):
         processed_list.append(actors_dict)
 
     return processed_list
+
+
+async def search_tmdb_item_details_async(session, title='movie', v_type='movie'):
+    url = f"https://api.themoviedb.org/3/search/{v_type}?query={title}&page=1"
+    async with session.get(url, headers=headers, timeout=10) as response:
+        response.raise_for_status()
+        data = await response.json()
+
+    if data.get('results'):
+        item = data.get("results")[0]
+    else:
+        return None
+
+    item_id = item.get('id')
+    item_vote_average = item.get('vote_average', 0)
+    item_poster_path = f"https://image.tmdb.org/t/p/w500{item.get('poster_path')}" if item.get('poster_path') else None
+
+    if v_type == 'movie':
+        item_title = item.get('title', item.get("original_name", "Unknown Title"))
+        item_released_date = item.get('release_date', '')
+        year = item_released_date.split("-")[0] if item_released_date and "-" in item_released_date else "N/A"
+    else:
+        item_title = item.get('name', item.get("original_name", "Unknown Title"))
+        item_first_air_date = item.get("first_air_date", "")
+        year = item_first_air_date.split("-")[0] if item_first_air_date and "-" in item_first_air_date else "N/A"
+
+    return {
+        "id": item_id,
+        "title": item_title,
+        "poster_url": item_poster_path,
+        "rating": item_vote_average,
+        "year": year,
+    }

@@ -412,8 +412,9 @@
                         for
                         you.</p>
                     <form id="aiDiscoveryForm">
+                        {% csrf_token %}
                         <div class="mb-3">
-                        <textarea class="form-control ai-discovery-input" id="aiPrompt" rows="3"
+                        <textarea class="form-control ai-discovery-input" id="aiPrompt" rows="3" name="aiPrompt"
                                   placeholder="I want to watch something with time travel, plot twists and a strong female lead..."></textarea>
                         </div>
                         <div class="d-grid">

@@ -2,7 +2,7 @@ import json
 
 from celery import shared_task
 from redis import Redis
-from .tmdp import *
+from .tmdp_api import *
 
 r = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 

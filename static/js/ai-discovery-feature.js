@@ -53,10 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
             aiResultsModal.show();
 
             // Make AJAX request to backend
-            fetch('/api/ai-search', {
+            fetch('/api/ai-search/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
                 },
                 body: JSON.stringify({ prompt: prompt })
             })
@@ -91,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to display results
     function displayResults(data, prompt) {
-        const { movies = [], shows = [] } = data;
+        const {movies = [], shows = [] } = data;
 
         // Build HTML for results
         let html = `

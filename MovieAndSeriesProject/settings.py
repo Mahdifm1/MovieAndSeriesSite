@@ -132,6 +132,9 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+LOGOUT_REDIRECT_URL = 'core:home_page'
+LOGIN_REDIRECT_URL = 'accounts:profile'
+
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # celery configs
@@ -186,8 +189,17 @@ env = environ.Env(
     DEBUG=(bool, False)
 )
 env.read_env(env_file=str(BASE_DIR / '.env'))
-print(BASE_DIR / '.env')
 
 TMDB_API_KEY = env('TMDB_API_KEY')
 ANOTHER_SECRET = env('ANOTHER_SECRET')
 LIARA_API_KEY = env('LIARA_API_KEY')
+
+MAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+MAIL_HOST = env('MAIL_HOST')
+MAIL_PORT = env('MAIL_PORT')
+MAIL_HOST_USER = env('MAIL_USER')
+MAIL_HOST_PASSWORD = env('MAIL_PASSWORD')
+MAIL_USE_TLS = True
+MAIL_FROM_ADDRESS = env('MAIL_FROM_ADDRESS')
+
+

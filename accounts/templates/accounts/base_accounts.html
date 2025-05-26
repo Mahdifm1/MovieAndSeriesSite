@@ -1,0 +1,166 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div class="absolute top-40 left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <div class="max-w-md w-full space-y-8 relative z-10 mx-auto transform">
+        <!-- Logo and branding -->
+        <div class="text-center transform transition-all duration-300 hover:scale-105">
+            <div class="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4 shadow-2xl">
+                <i class="bi bi-play-circle-fill text-2xl text-white"></i>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">StreamSense</h1>
+            <p class="text-gray-400 text-sm">AI-Powered Entertainment Discovery</p>
+        </div>
+
+        <!-- Messages Framework -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="rounded-xl p-4 mb-4 backdrop-blur-sm border animate-slideIn {% if message.tags == 'success' %}bg-emerald-500/10 border-emerald-500/20 text-emerald-300{% elif message.tags == 'error' %}bg-red-500/10 border-red-500/20 text-red-300{% elif message.tags == 'warning' %}bg-amber-500/10 border-amber-500/20 text-amber-300{% else %}bg-blue-500/10 border-blue-500/20 text-blue-300{% endif %}">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-3">
+                            {% if message.tags == 'success' %}
+                                <i class="bi bi-check-circle-fill text-emerald-400"></i>
+                            {% elif message.tags == 'error' %}
+                                <i class="bi bi-exclamation-triangle-fill text-red-400"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="bi bi-exclamation-triangle-fill text-amber-400"></i>
+                            {% else %}
+                                <i class="bi bi-info-circle-fill text-blue-400"></i>
+                            {% endif %}
+                        </div>
+                        <p class="text-sm font-medium">{{ message }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Main content card -->
+        <div class="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:scale-[1.01]">
+            {% block auth_content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+.animate-slideIn {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Custom input styles */
+.glass-input {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(147, 51, 234, 0.5);
+    box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1);
+}
+
+.glass-button {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.8), rgba(219, 39, 119, 0.8));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 1), rgba(219, 39, 119, 1));
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(147, 51, 234, 0.3);
+}
+
+/* Center all form elements */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Ensure form groups take full width */
+form > div {
+    width: 100%;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Enhanced password visibility toggle
+    function togglePassword(fieldId, iconId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(iconId);
+
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+            icon.style.color = '#a855f7';
+        } else {
+            field.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+            icon.style.color = '#9ca3af';
+        }
+    }
+
+    // Add floating label effect
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], textarea');
+
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+
+            input.addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+
+            // Check if input has value on load
+            if (input.value !== '') {
+                input.parentElement.classList.add('focused');
+            }
+        });
+    });
+</script>
+{% endblock %}

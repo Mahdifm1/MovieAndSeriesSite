@@ -1,0 +1,72 @@
+{% extends "accounts/base_accounts.html" %}
+{% load widget_tweaks %}
+
+{% block page_title %}Edit Profile{% endblock page_title %}
+
+{% block form_title %}Edit Your Profile{% endblock form_title %}
+{% block form_subtitle %}Update your personal information.{% endblock form_subtitle %}
+
+{% block form_content %}
+<form id="profile-edit-form" method="post" action="{% url 'accounts:profile_edit' %}" class="space-y-6" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="rounded-md bg-red-500/20 p-4 border border-red-700">
+            <div class="ml-3">
+                <div class="mt-2 text-sm text-red-400">
+                    <ul role="list" class="list-disc space-y-1 pl-5">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% for field in form %}
+        <div class="space-y-1">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-300">
+                {{ field.label_tag }}
+            </label>
+            {% if field.name == 'avatar' %}
+                 {% render_field field class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-600 file:text-white hover:file:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary-500" %}
+                 {% if field.value %}
+                    <p class="text-xs text-gray-500 mt-1">Current: <a href="{{ field.value.url }}" target="_blank" class="text-primary-400 hover:underline">{{ field.value.name|truncatechars:30 }}</a></p>
+                 {% endif %}
+            {% elif field.field.widget.input_type == 'password' %}
+            <div class="mt-1 relative">
+                {% render_field field class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500" placeholder="••••••••" %}
+                <button type="button" class="password-toggle absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-300" aria-label="Show password">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+            {% else %}
+                 {% render_field field class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500" placeholder=field.label %}
+            {% endif %}
+            {% if field.help_text %}
+                <p class="text-xs text-gray-500">{{ field.help_text|safe }}</p>
+            {% endif %}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <div>
+        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary-500">
+            Save Changes
+        </button>
+    </div>
+</form>
+{% endblock form_content %}
+
+{% block form_footer_links %}
+    <a href="{% url 'accounts:profile' %}" class="font-medium text-primary-500 hover:text-primary-400">
+        Back to Profile
+    </a>
+{% endblock form_footer_links %}

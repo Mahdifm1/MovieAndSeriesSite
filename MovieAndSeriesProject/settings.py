@@ -41,8 +41,12 @@ INSTALLED_APPS = [
     'django_celery_results',
     'django_celery_beat',
 
+    # other pakages
+    'widget_tweaks',
+
     # apps
-    'core'
+    'core',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -127,6 +131,8 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # celery configs
 CELERY_TIMEZONE = TIME_ZONE

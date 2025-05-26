@@ -1,166 +1,132 @@
-{% extends 'core/base.html' %}
-{% load static %}
-
-{% block content %}
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-    <!-- Animated background elements -->
-    <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div class="absolute top-40 left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-    </div>
-
-    <div class="max-w-md w-full space-y-8 relative z-10 mx-auto transform">
-        <!-- Logo and branding -->
-        <div class="text-center transform transition-all duration-300 hover:scale-105">
-            <div class="mx-auto h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4 shadow-2xl">
-                <i class="bi bi-play-circle-fill text-2xl text-white"></i>
-            </div>
-            <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">StreamSense</h1>
-            <p class="text-gray-400 text-sm">AI-Powered Entertainment Discovery</p>
-        </div>
-
-        <!-- Messages Framework -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="rounded-xl p-4 mb-4 backdrop-blur-sm border animate-slideIn {% if message.tags == 'success' %}bg-emerald-500/10 border-emerald-500/20 text-emerald-300{% elif message.tags == 'error' %}bg-red-500/10 border-red-500/20 text-red-300{% elif message.tags == 'warning' %}bg-amber-500/10 border-amber-500/20 text-amber-300{% else %}bg-blue-500/10 border-blue-500/20 text-blue-300{% endif %}">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 mr-3">
-                            {% if message.tags == 'success' %}
-                                <i class="bi bi-check-circle-fill text-emerald-400"></i>
-                            {% elif message.tags == 'error' %}
-                                <i class="bi bi-exclamation-triangle-fill text-red-400"></i>
-                            {% elif message.tags == 'warning' %}
-                                <i class="bi bi-exclamation-triangle-fill text-amber-400"></i>
-                            {% else %}
-                                <i class="bi bi-info-circle-fill text-blue-400"></i>
-                            {% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block page_title %}{% endblock %} - StreamAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-gray-900 font-sans">
+    <!-- Navigation Header -->
+    <nav class="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="h-8 w-8 flex items-center justify-center rounded-lg bg-gradient-to-r from-primary-500 to-primary-600">
+                            <i class="fas fa-play text-white text-sm"></i>
                         </div>
-                        <p class="text-sm font-medium">{{ message }}</p>
+                    </div>
+                    <div class="ml-6 flex space-x-4">
+                        <a href="{% url 'home_page' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="{% url 'browse_page' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Browse</a>
+                        <a href="{% url 'actors_page' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Actors</a>
                     </div>
                 </div>
-            {% endfor %}
-        {% endif %}
+                <div class="flex items-center">
+                    {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'accounts:logout' %}" class="flex">
+                            {% csrf_token %}
+                            <button type="submit" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                                Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Login</a>
+                        <a href="{% url 'accounts:signup' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium ml-4">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
 
-        <!-- Main content card -->
-        <div class="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 transform hover:scale-[1.01]">
-            {% block auth_content %}
-            {% endblock %}
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- StreamAI Logo/Branding -->
+            <div class="text-center">
+                <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 shadow-lg">
+                    <i class="fas fa-play text-white text-xl"></i>
+                </div>
+                <h1 class="mt-4 text-2xl font-bold text-white">StreamAI</h1>
+                <p class="mt-1 text-sm text-gray-400">AI-Powered Entertainment Discovery</p>
+            </div>
+
+            <!-- Messages Framework -->
+            {% if messages %}
+                <div class="space-y-3">
+                    {% for message in messages %}
+                        <div class="rounded-lg p-4 {% if message.tags == 'success' %}bg-green-900/50 border border-green-700 text-green-200{% elif message.tags == 'error' %}bg-red-900/50 border border-red-700 text-red-200{% elif message.tags == 'warning' %}bg-yellow-900/50 border border-yellow-700 text-yellow-200{% else %}bg-blue-900/50 border border-blue-700 text-blue-200{% endif %}">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    {% if message.tags == 'success' %}
+                                        <i class="fas fa-check-circle"></i>
+                                    {% elif message.tags == 'error' %}
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    {% elif message.tags == 'warning' %}
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    {% else %}
+                                        <i class="fas fa-info-circle"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium">{{ message }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Main Content Card -->
+            <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700/50 p-8">
+                <!-- Page Title -->
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-white">
+                        {% block form_title %}{% endblock %}
+                    </h2>
+                    <p class="mt-2 text-gray-400">
+                        {% block form_subtitle %}{% endblock %}
+                    </p>
+                </div>
+
+                <!-- Form Content -->
+                {% block form_content %}
+                {% endblock %}
+
+                <!-- Footer Links -->
+                <div class="mt-6 text-center text-sm">
+                    {% block form_footer_links %}
+                    {% endblock %}
+                </div>
+            </div>
         </div>
     </div>
-</div>
-
-<style>
-@keyframes blob {
-    0% { transform: translate(0px, 0px) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0px, 0px) scale(1); }
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-blob {
-    animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-    animation-delay: 4s;
-}
-
-.animate-slideIn {
-    animation: slideIn 0.5s ease-out;
-}
-
-/* Custom input styles */
-.glass-input {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-}
-
-.glass-input:focus {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(147, 51, 234, 0.5);
-    box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1);
-}
-
-.glass-button {
-    background: linear-gradient(135deg, rgba(147, 51, 234, 0.8), rgba(219, 39, 119, 0.8));
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-}
-
-.glass-button:hover {
-    background: linear-gradient(135deg, rgba(147, 51, 234, 1), rgba(219, 39, 119, 1));
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(147, 51, 234, 0.3);
-}
-
-/* Center all form elements */
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-/* Ensure form groups take full width */
-form > div {
-    width: 100%;
-}
-</style>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    // Enhanced password visibility toggle
-    function togglePassword(fieldId, iconId) {
-        const field = document.getElementById(fieldId);
-        const icon = document.getElementById(iconId);
-
-        if (field.type === 'password') {
-            field.type = 'text';
-            icon.classList.remove('bi-eye');
-            icon.classList.add('bi-eye-slash');
-            icon.style.color = '#a855f7';
-        } else {
-            field.type = 'password';
-            icon.classList.remove('bi-eye-slash');
-            icon.classList.add('bi-eye');
-            icon.style.color = '#9ca3af';
-        }
-    }
-
-    // Add floating label effect
-    document.addEventListener('DOMContentLoaded', function() {
-        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], textarea');
-
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.classList.add('focused');
-            });
-
-            input.addEventListener('blur', function() {
-                if (this.value === '') {
-                    this.parentElement.classList.remove('focused');
-                }
-            });
-
-            // Check if input has value on load
-            if (input.value !== '') {
-                input.parentElement.classList.add('focused');
-            }
-        });
-    });
-</script>
-{% endblock %}
+</body>
+</html>

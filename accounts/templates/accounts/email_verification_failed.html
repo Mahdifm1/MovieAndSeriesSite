@@ -1,0 +1,70 @@
+{% extends 'accounts/base_accounts.html' %}
+
+{% block page_title %}Verification Failed{% endblock %}
+
+{% block form_title %}Email verification failed{% endblock %}
+
+{% block form_subtitle %}
+    The verification link was invalid or has expired
+{% endblock %}
+
+{% block form_content %}
+<div class="text-center">
+    <div class="rounded-md bg-red-900 p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-300" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-300">Verification Failed</h3>
+                <div class="mt-2 text-sm text-red-200">
+                    <p>The verification link you used is invalid or has expired. Please request a new verification email.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block form_footer_links %}
+<p class="text-gray-400">
+    <a href="{% url 'accounts:profile' %}" class="font-medium text-purple-400 hover:text-purple-300">
+        Return to Profile
+    </a>
+    <span class="mx-2">•</span>
+    <button type="button" onclick="resendVerificationEmail()" class="font-medium text-purple-400 hover:text-purple-300">
+        Resend Verification Email
+    </button>
+</p>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function resendVerificationEmail() {
+    fetch('{% url "accounts:resend_verification" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Verification email sent successfully!');
+        } else if (data.status === 'already_verified') {
+            alert('Your email is already verified.');
+        } else {
+            alert('Failed to send verification email. Please try again later.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again later.');
+    });
+}
+</script>
+{% endblock %} 

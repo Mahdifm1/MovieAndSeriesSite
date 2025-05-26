@@ -1,11 +1,11 @@
 {% extends 'accounts/base_accounts.html' %}
 
-{% block page_title %}Password Reset Complete{% endblock %}
+{% block page_title %}Email Verified{% endblock %}
 
-{% block form_title %}Password reset complete{% endblock %}
+{% block form_title %}Email verified successfully{% endblock %}
 
 {% block form_subtitle %}
-    Your password has been successfully reset
+    Your email has been verified. You can now access all features of StreamAI.
 {% endblock %}
 
 {% block form_content %}
@@ -18,9 +18,9 @@
                 </svg>
             </div>
             <div class="ml-3">
-                <h3 class="text-sm font-medium text-green-300">Success!</h3>
+                <h3 class="text-sm font-medium text-green-300">Verification Complete</h3>
                 <div class="mt-2 text-sm text-green-200">
-                    <p>Your password has been set. You can now use your new password to sign in to your account.</p>
+                    <p>Thank you for verifying your email address. Your account is now fully activated.</p>
                 </div>
             </div>
         </div>
@@ -30,8 +30,8 @@
 
 {% block form_footer_links %}
 <p class="text-gray-400">
-    <a href="{% url 'accounts:login' %}" class="font-medium text-purple-400 hover:text-purple-300">
-        Sign in with your new password
+    <a href="{% url 'home_page' %}" class="font-medium text-purple-400 hover:text-purple-300">
+        Go to Homepage
     </a>
 </p>
 {% endblock %} 

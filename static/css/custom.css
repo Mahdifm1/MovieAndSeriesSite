@@ -347,3 +347,11 @@ footer {
         font-size: 1.25rem;
     }
 }
+
+.form-style{
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+}

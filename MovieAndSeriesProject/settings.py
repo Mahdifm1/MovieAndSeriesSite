@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-!h+qt%##_g6y9s#a!+sxfx-2z5w0b)xr*74#u@-ab$q$%pvq_)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -126,6 +126,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -201,5 +204,13 @@ MAIL_HOST_USER = env('MAIL_USER')
 MAIL_HOST_PASSWORD = env('MAIL_PASSWORD')
 MAIL_USE_TLS = True
 MAIL_FROM_ADDRESS = env('MAIL_FROM_ADDRESS')
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 

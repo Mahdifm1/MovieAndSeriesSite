@@ -27,7 +27,7 @@
                     <a class="nav-link {% if request.resolver_match.url_name == 'home_page' %}active{% endif %}" href="{% url 'home_page' %}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'brows_page' %}active{% endif %}" href="{% url 'brows_page' %}">Browse</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'browse_page' %}active{% endif %}" href="{% url 'browse_page' %}">Browse</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'actors_page' %}active{% endif %} " href="{% url 'actors_page' %}">Actors</a>
@@ -43,7 +43,7 @@
                         </button>
                     </div>
                 </form>
-                <a href="/login" class="btn btn-outline-light btn-sm">{% if user.is_authenticated %}Profile{% else %}Sign In{% endif %} </a>
+                <a href="{% if user.is_authenticated %}{% url 'accounts:profile' %}{% else %}{% url 'accounts:signup' %}{% endif %}" class="btn btn-outline-light btn-sm">{% if user.is_authenticated %}Profile{% else %}Sign In{% endif %} </a>
             </div>
         </div>
     </div>

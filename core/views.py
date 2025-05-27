@@ -5,13 +5,16 @@ import asyncio
 import aiohttp
 
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 
 from .tmdp_api import get_filtered_movies_and_series_list, get_filtered_actors_list, get_trending_actors_list, \
-    search_tmdb_item_details_async
+    search_tmdb_item_details_async, get_movie_details, get_tv_details, get_actor_details
 from .ai_api import send_prompt_to_ai
+from .models import UserLike, UserWatchlist
 
 redis_client = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -19,12 +22,48 @@ redis_client = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, d
 class HomeView(View):
     def get(self, request):
         context = {}
+        # Get latest movies and series
         context['latest_movies'] = sorted(json.loads(redis_client.get('latest_movies').decode('utf-8')),
-                                          key=lambda d: d['tmdb_rating'], reverse=True)[:5]
+                                        key=lambda d: d['tmdb_rating'], reverse=True)[:5]
         context['latest_series'] = sorted(json.loads(redis_client.get('latest_series').decode('utf-8')),
-                                          key=lambda d: d['tmdb_rating'], reverse=True)[:5]
-        context['trending_now'] = json.loads(redis_client.get('trending_movies_and_series'))[:10]
+                                        key=lambda d: d['tmdb_rating'], reverse=True)[:5]
+        
+        # Get trending items and normalize their media_type
+        trending_items = json.loads(redis_client.get('trending_movies_and_series'))[:10]
+        for item in trending_items:
+            # Ensure media_type is set (default to 'movie' if not present)
+            if not item.get('media_type'):
+                item['media_type'] = 'movie'
+            # Normalize 'tv' to match our item_type convention
+            if item['media_type'] == 'tv':
+                item['media_type'] = 'tv'
+        context['trending_now'] = trending_items
+        
+        # Add AI recommended movies and series if user is authenticated
+        if request.user.is_authenticated:
+            try:
+                context['ai_recommended_movies'] = request.user.ai_recommended_movies
+            except (TypeError, AttributeError):
+                context['ai_recommended_movies'] = []
+                
+            try:
+                context['ai_recommended_series'] = request.user.ai_recommended_series
+            except (TypeError, AttributeError):
+                context['ai_recommended_series'] = []
 
+        for list_items in ['ai_recommended_movies', 'ai_recommended_series', 'latest_movies', 'latest_series', 'trending_now']:
+            for item in context[list_items]:
+                item_id = item.get('id')
+                if UserLike.objects.filter(user=request.user, item_id=item_id).exists():
+                    item['is_liked'] = True
+                else:
+                    item['is_liked'] = False
+                
+                if UserWatchlist.objects.filter(user=request.user, item_id=item_id).exists():
+                    item['in_watchlist'] = True
+                else:
+                    item['in_watchlist'] = False
+        
         return render(request, 'core/home_page.html', context)
 
 
@@ -68,6 +107,7 @@ class BrowseView(View):
         context['total_results'] = filtered_movie_and_series_list.get('total_results', 0)
         context['page_numbers'] = range(1, filtered_movie_and_series_list.get('total_pages', 1) + 1)
 
+        
         # get query params
         context['current_query_params'] = query_params.urlencode()
         if context['current_query_params'].startswith('page='):
@@ -164,8 +204,203 @@ class AiDiscoveryView(View):
             series_results = await asyncio.gather(*series_tasks)
 
             movies_data = [res for res in movie_results if res is not None]
-            shows_data = [res for res in series_results if res is not None]
+            series_data = [res for res in series_results if res is not None]
 
-        final_response = {"movies": movies_data, "shows": shows_data}
+        final_response = {"movies": movies_data, "shows": series_data}
 
         return JsonResponse(final_response)
+
+
+class MovieDetailView(View):
+    def get(self, request, movie_id):
+        movie_details = get_movie_details(movie_id)
+        if not movie_details:
+            return redirect('home_page')
+
+        # Normalize title and date fields
+        if 'name' in movie_details and not 'title' in movie_details:
+            movie_details['title'] = movie_details['name']
+        if 'first_air_date' in movie_details and not 'release_date' in movie_details:
+            movie_details['release_date'] = movie_details['first_air_date']
+
+        # Ensure full URLs for images
+        if movie_details.get('poster_path'):
+            if not movie_details['poster_path'].startswith('http'):
+                movie_details['poster_path'] = f"https://image.tmdb.org/t/p/w500{movie_details['poster_path']}"
+
+        # Process cast profile images and find director
+        if movie_details.get('credits', {}).get('cast'):
+            movie_details['credits']['cast'] = movie_details['credits']['cast'][:8]
+            for cast_member in movie_details['credits']['cast']:
+                if cast_member.get('profile_path'):
+                    if not cast_member['profile_path'].startswith('http'):
+                        cast_member['profile_path'] = f"https://image.tmdb.org/t/p/w185{cast_member['profile_path']}"
+            for crew_member in movie_details['credits']['crew']:
+                if crew_member.get('job') == "Director":
+                    movie_details['director'] = crew_member['name']
+                    break
+            
+        # calculate runtime
+        if movie_details.get('runtime'):
+            hours = movie_details['runtime'] // 60
+            minutes = movie_details['runtime'] % 60
+            movie_details['runtime'] = f"{hours}h {minutes}min"
+        
+        context = {
+            'item': movie_details,
+            'item_type': 'movie'
+        }
+
+        if request.user.is_authenticated:
+            context['is_liked'] = UserLike.objects.filter(
+                user=request.user,
+                item_id=movie_id,
+                item_type='movie'
+            ).exists()
+            context['in_watchlist'] = UserWatchlist.objects.filter(
+                user=request.user,
+                item_id=movie_id,
+                item_type='movie'
+            ).exists()
+        
+        return render(request, 'core/detail_page.html', context)
+
+
+class SeriesDetailView(View):
+    def get(self, request, series_id):
+        series_details = get_tv_details(series_id)
+        if not series_details:
+            return redirect('home_page')
+
+        # Normalize title and date fields
+        if 'name' in series_details and not 'title' in series_details:
+            series_details['title'] = series_details['name']
+        if 'first_air_date' in series_details and not 'release_date' in series_details:
+            series_details['release_date'] = series_details['first_air_date']
+
+        # Ensure full URLs for images
+        if series_details.get('poster_path'):
+            if not series_details['poster_path'].startswith('http'):
+                series_details['poster_path'] = f"https://image.tmdb.org/t/p/w500{series_details['poster_path']}"
+        
+        # Process cast profile images
+        if series_details.get('credits', {}).get('cast'):
+            series_details['credits']['cast'] = series_details['credits']['cast'][:8]
+            for cast_member in series_details['credits']['cast']:
+                if cast_member.get('profile_path'):
+                    if not cast_member['profile_path'].startswith('http'):
+                        cast_member['profile_path'] = f"https://image.tmdb.org/t/p/w185{cast_member['profile_path']}"
+            for crew_member in series_details['credits']['crew']:
+                if crew_member.get('job') == "Director":
+                    series_details['director'] = crew_member['name']
+                    break
+
+        context = {
+            'item': series_details,
+            'item_type': 'tv'
+        }
+
+        if request.user.is_authenticated:
+            context['is_liked'] = UserLike.objects.filter(
+                user=request.user,
+                item_id=series_id,
+                item_type='tv'
+            ).exists()
+            context['in_watchlist'] = UserWatchlist.objects.filter(
+                user=request.user,
+                item_id=series_id,
+                item_type='tv'
+            ).exists()
+
+        return render(request, 'core/detail_page.html', context)
+
+
+class ActorDetailView(View):
+    def get(self, request, actor_id):
+        actor_details = get_actor_details(actor_id)
+        if not actor_details:
+            return redirect('home_page')
+        
+        if actor_details.get('credits').get('cast'):
+            actor_details['credits']['cast'] = actor_details['credits']['cast'][:10]
+        if actor_details.get('credits').get('crew'):
+            actor_details['credits']['crew'] = []
+        if actor_details.get('imdb_id'):
+            actor_details['imdb_page'] = f"https://www.imdb.com/name/{actor_details['imdb_id']}/"
+        if actor_details.get('profile_path'):
+            actor_details['profile_path'] = f"https://image.tmdb.org/t/p/w500{actor_details['profile_path']}"
+        if actor_details.get('gender') == 1:
+            actor_details['gender'] = 'Female'
+        elif actor_details.get('gender') == 2:
+            actor_details['gender'] = 'Male'
+        else:
+            actor_details['gender'] = '-'
+        
+
+
+        context = {
+            'item': actor_details,
+            'item_type': 'actor'    
+        }
+        
+        return render(request, 'core/detail_actor_page.html', context)
+
+class ToggleLikeView(LoginRequiredMixin, View):
+    def post(self, request):
+        item_id = request.POST.get('item_id')
+        item_type = request.POST.get('item_type')
+        item_title = request.POST.get('item_title')
+        
+        if not item_id or item_type not in ['movie', 'tv'] or not item_title:
+            return JsonResponse({'error': 'Invalid request'}, status=400)
+        print(item_id, item_type, item_title)
+        try:
+            like_obj = UserLike.objects.get(
+                user=request.user,
+                item_id=item_id,
+                item_type=item_type
+            )
+            like_obj.delete()
+            is_liked = False
+        except UserLike.DoesNotExist:
+            UserLike.objects.create(
+                user=request.user,
+                item_id=item_id,
+                item_type=item_type,
+                item_title=item_title
+            )
+            is_liked = True
+            # Trigger AI recommendations update
+            from .tasks import update_ai_recommendations
+            update_ai_recommendations.delay(request.user.id)
+        
+        return JsonResponse({'is_liked': is_liked})
+
+
+class ToggleWatchlistView(LoginRequiredMixin, View):
+    def post(self, request):
+        item_id = request.POST.get('item_id')
+        item_type = request.POST.get('item_type')
+        item_title = request.POST.get('item_title')
+        
+        if not item_id or item_type not in ['movie', 'tv'] or not item_title:
+            return JsonResponse({'error': 'Invalid request'}, status=400)
+        
+        try:
+            watchlist_obj = UserWatchlist.objects.get(
+                user=request.user,
+                item_id=item_id,
+                item_type=item_type
+            )
+            watchlist_obj.delete()
+            in_watchlist = False
+        except UserWatchlist.DoesNotExist:
+            UserWatchlist.objects.create(
+                user=request.user,
+                item_id=item_id,
+                item_type=item_type,
+                item_title=item_title
+            )
+            in_watchlist = True
+        
+        return JsonResponse({'in_watchlist': in_watchlist})

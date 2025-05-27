@@ -34,6 +34,7 @@ def get_latest_movie_series_list(v_type, page=1):
             'language': latest.get('original_language'),
             'overview': latest.get('overview'),
             'tmdb_rating': latest.get('vote_average'),
+            'media_type': v_type
         }
         processed_list.append(processed)
 
@@ -167,7 +168,8 @@ def get_filtered_movies_and_series_list(page=1, actor=None, v_type='movie', year
             "language": filtered.get('original_language') if filtered.get('original_language') else filtered.get(
                 'language'),
             "overview": filtered.get('overview'),
-            "tmdb_rating": filtered.get('vote_average')
+            "tmdb_rating": filtered.get('vote_average'),
+            "media_type": v_type
         }
         filtered_list.append(item)
 

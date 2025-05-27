@@ -176,6 +176,11 @@ CELERY_TASK_QUEUES = {
         'exchange': 'movie_and_series_data_sync',
         'exchange_type': 'direct',
         'routing_key': 'movie_and_series_data_sync',
+    },
+    'ai_recommendations': {
+        'exchange': 'ai_recommendations',
+        'exchange_type': 'direct',
+        'routing_key': 'ai_recommendations',
     }
 }
 
@@ -185,6 +190,9 @@ CELERY_TASK_ROUTES = {
     },
     'core.tasks.get_trending_movies_and_series_task': {
         'queue': 'movie_and_series_data_sync',
+    },
+    'core.tasks.update_ai_recommendations': {
+        'queue': 'ai_recommendations',
     }
 }
 

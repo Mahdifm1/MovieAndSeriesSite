@@ -1,0 +1,225 @@
+.detail-page {
+    min-height: 100vh;
+    background-color: #141414;
+    color: #fff;
+}
+
+.hero-section {
+    position: relative;
+    height: 80vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(20, 20, 20, 0.7) 0%, rgba(20, 20, 20, 0.9) 100%);
+    padding: 60px 0;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    max-width: 800px;
+}
+
+.title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.metadata {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.metadata span {
+    margin-right: 1.5rem;
+}
+
+.metadata span:last-child {
+    margin-right: 0;
+}
+
+.overview {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-like {
+    background-color: #e50914;
+    color: white;
+    border: none;
+}
+
+.btn-like:hover {
+    background-color: #b2070f;
+}
+
+.btn-like.active {
+    background-color: #b2070f;
+}
+
+.btn-watchlist {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.btn-watchlist:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-watchlist.active {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.details-section {
+    padding: 3rem 0;
+    background-color: #141414;
+}
+
+.cast-section, .seasons-section {
+    margin-bottom: 3rem;
+}
+
+h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.cast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.cast-member {
+    background-color: #2f2f2f;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.cast-member:hover {
+    transform: scale(1.05);
+}
+
+.cast-member img {
+    width: 100%;
+    height: 225px;
+    object-fit: cover;
+}
+
+.cast-info {
+    padding: 1rem;
+}
+
+.cast-info .name {
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.cast-info .character {
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.seasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.season-card {
+    background-color: #2f2f2f;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.season-card:hover {
+    transform: scale(1.05);
+}
+
+.season-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.season-info {
+    padding: 1rem;
+}
+
+.season-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.season-info p {
+    color: #999;
+    margin-bottom: 0.3rem;
+}
+
+.additional-info {
+    background-color: #2f2f2f;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.additional-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.additional-info li {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.additional-info li:last-child {
+    margin-bottom: 0;
+}
+
+.additional-info strong {
+    display: block;
+    color: #999;
+    margin-bottom: 0.3rem;
+}
+
+.no-image {
+    height: 225px;
+    background-color: #2f2f2f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+} 

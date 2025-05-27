@@ -1,14 +1,26 @@
 # Movie and Series Project 🎬
 
-A sophisticated Django-based web application for discovering and exploring movies and TV series, leveraging modern technologies and best practices in web development.
+A sophisticated Django-based web application for discovering and exploring movies and TV series, leveraging modern technologies and best practices in web development. The project showcases advanced implementation of asynchronous processing, AI-powered recommendations, and comprehensive testing.
 
 ## 🌟 Features
 
 - **Real-time Movie & Series Data**: Integration with TMDB API for up-to-date content
-- **Asynchronous Processing**: Using Celery for background tasks and data synchronization
-- **Redis Caching**: Efficient data storage and retrieval
-- **User Authentication System**: Custom user model with email verification
-- **AI-Powered Discovery**: Smart content recommendations (AI integration)
+- **AI-Powered Recommendations**: 
+  - Integration with OpenAI's GPT models via Liara.ai
+  - Personalized movie and series suggestions based on user preferences
+  - Asynchronous processing of recommendations
+- **Advanced Asynchronous Processing**: 
+  - Celery for background tasks and data synchronization
+  - Async/Await implementation for API calls
+  - Parallel processing of movie/series data
+- **Redis Caching & Data Management**: 
+  - Efficient data storage and retrieval
+  - Caching of trending and latest content
+  - Task queue management
+- **Comprehensive User System**: 
+  - Custom user model with email verification
+  - User preferences and likes tracking
+  - Secure password management
 - **Modern UI/UX**: Responsive and user-friendly interface
 - **RESTful API Integration**: Clean architecture for external service communication
 
@@ -16,48 +28,88 @@ A sophisticated Django-based web application for discovering and exploring movie
 
 ### Backend
 - **Django 5.2.1**: Modern Python web framework
-- **Celery**: Distributed task queue
-  - Task queues for movie/series data synchronization
+- **Celery**: Advanced distributed task queue implementation
+  - Automated content synchronization
+  - AI recommendation processing
   - Email verification system
-  - Automated background jobs
-- **Redis**: Cache and message broker
-  - Storing latest movies and series data
-  - Caching trending content
+  - Asynchronous background jobs
+- **Redis**: Multi-purpose data store
+  - Caching latest and trending content
   - Celery broker functionality
+  - Session management
+- **Async Processing**:
+  - aiohttp for async API calls
+  - asyncio for concurrent operations
+
+### AI Integration
+- **OpenAI GPT Integration**: 
+  - Custom AI recommendation system
+  - Liara.ai API integration
+  - Intelligent content suggestions
 
 ### Frontend
-- **HTML/CSS/JavaScript**: Frontend implementation
-- **Widget Tweaks**: Django form rendering enhancement
+- **HTML/CSS/JavaScript**: Modern frontend implementation
+- **Widget Tweaks**: Enhanced Django form rendering
+- **Responsive Design**: Mobile-first approach
 
 ### External Services
-- **TMDB API**: Movie and series data source
-- **SMTP Integration**: Email verification system
+- **TMDB API**: Comprehensive movie and series data source
+- **Liara.ai**: AI processing platform
+- **SMTP Integration**: Robust email verification system
 
-## 🚀 Celery Implementation
+## 🚀 Advanced Celery Implementation
 
-The project utilizes Celery for several key functionalities:
+The project showcases sophisticated Celery usage:
 
-1. **Data Synchronization Tasks**:
-   - `get_and_store_latest_movies_and_series_task`: Fetches and stores latest content
-   - `get_trending_movies_and_series_task`: Updates trending content
-
-2. **Email System**:
-   - `send_verification_email_task`: Handles asynchronous email verification
-   - Implements retry mechanism for failed email attempts
-
-3. **Task Queues**:
+1. **Content Management Tasks**:
    ```python
-   CELERY_TASK_QUEUES = {
-       'default': {
-           'exchange': 'default',
-           'routing_key': 'default',
-       },
-       'movie_and_series_data_sync': {
-           'exchange': 'movie_and_series_data_sync',
-           'routing_key': 'movie_and_series_data_sync',
-       }
-   }
+   @shared_task()
+   def get_and_store_latest_movies_and_series_task():
+       movies_list = get_and_store_latest_movies_or_series("movies")
+       series_list = get_and_store_latest_movies_or_series("series")
+       return {"latest_movies": movies_list, "latest_series": series_list}
    ```
+
+2. **AI Recommendation System**:
+   ```python
+   @shared_task
+   def update_ai_recommendations(user_id):
+       # Fetch user preferences
+       # Process AI recommendations
+       # Async API calls for content details
+       # Store personalized suggestions
+   ```
+
+3. **Asynchronous Processing**:
+   ```python
+   async def fetch_details(session, title, media_type):
+       search_result = await search_tmdb_item_details_async(session, title, media_type)
+       # Process and return details
+   ```
+
+## 🧪 Comprehensive Testing
+
+The project includes extensive test coverage:
+
+1. **User Authentication Tests**:
+   - Email verification flow
+   - Password management
+   - User registration and login
+
+2. **AI Integration Tests**:
+   - Recommendation system
+   - API response handling
+   - Error scenarios
+
+3. **Async Operation Tests**:
+   - Celery task execution
+   - Redis caching
+   - API integrations
+
+4. **Security Tests**:
+   - Authentication flows
+   - Data protection
+   - API security
 
 ## 🔧 Setup and Installation
 
@@ -74,7 +126,6 @@ The project utilizes Celery for several key functionalities:
 3. Set up environment variables in `.env`:
    ```
    TMDB_API_KEY=your_tmdb_api_key
-   ANOTHER_SECRET=your_secret
    LIARA_API_KEY=your_liara_key
    MAIL_HOST=your_mail_host
    MAIL_PORT=your_mail_port
@@ -98,68 +149,44 @@ The project utilizes Celery for several key functionalities:
    python manage.py runserver
    ```
 
-## 🔐 Security Features
+## 🎯 Advanced Skills Demonstrated
 
-- HTTPS enforcement in production
-- HSTS implementation
-- Secure cookie handling
-- CSRF protection
-- Custom user authentication
+1. **Asynchronous Programming**:
+   - Celery task management
+   - asyncio/aiohttp implementation
+   - Parallel processing
+   - Event-driven architecture
 
-## 🧪 Testing
+2. **AI Integration**:
+   - OpenAI API implementation
+   - Custom recommendation algorithms
+   - Async processing of AI responses
 
-Comprehensive test suite including:
-- User model tests
-- Authentication flow tests
-- Celery task tests
-- Email verification tests
-- Password change functionality tests
-
-## 📝 API Documentation
-
-The project integrates with TMDB API for:
-- Latest movies and series
-- Trending content
-- Actor information
-- Detailed content information
-
-## 🎯 Skills Demonstrated
-
-1. **Backend Development**:
-   - Django framework expertise
-   - Asynchronous programming
-   - Task queue implementation
-   - Cache management
-   - Custom user authentication
-
-2. **System Architecture**:
+3. **System Architecture**:
    - Distributed system design
-   - Message queue architecture
-   - Caching strategies
-   - API integration
-
-3. **Security Implementation**:
-   - Secure email verification
-   - Production security measures
-   - Environment variable management
+   - Cache management
+   - Task queue optimization
+   - API integration patterns
 
 4. **Testing and Quality Assurance**:
-   - Unit testing
+   - Comprehensive test suite
    - Integration testing
-   - Mock testing
+   - Async testing patterns
+   - Security testing
 
-5. **DevOps Knowledge**:
-   - Redis configuration
-   - Celery worker management
-   - Environment setup
+5. **Performance Optimization**:
+   - Redis caching strategies
+   - Async operations
+   - Batch processing
+   - Resource management
 
 ## 📈 Future Improvements
 
-- Implement user watchlists
-- Add social authentication
-- Enhance AI recommendations
-- Add real-time notifications
-- Implement user reviews and ratings
+- Enhanced AI recommendation algorithms
+- Real-time notifications system
+- Social authentication integration
+- Advanced user analytics
+- Mobile application development
 
 ## 📄 License
 

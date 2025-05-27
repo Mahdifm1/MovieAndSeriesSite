@@ -1,0 +1,562 @@
+{% extends 'core/base.html' %}
+{% block style %}
+    <style>
+        :root {
+            --primary-gold: #D4AF37;
+            --secondary-gold: #B8860B;
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --text-primary: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 500px;
+            gap: 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .profile-content {
+            padding-left: 40px;
+        }
+
+        .actor-category {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .actor-category::before {
+            content: '|';
+            color: var(--primary-gold);
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .actor-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-gold) 0%, #f4e4a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .actor-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+        }
+
+        .actor-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .actor-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-gold);
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .btn-custom {
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-gold) 0%, var(--secondary-gold) 100%);
+            color: var(--dark-bg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+            color: var(--dark-bg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            color: var(--text-primary);
+        }
+
+        .biography-section {
+            margin-top: 30px;
+        }
+
+        .biography-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary-gold);
+            margin-bottom: 20px;
+        }
+
+        .biography-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            max-width: 600px;
+        }
+
+        .profile-image-section {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stats-container {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            z-index: 10;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary-gold);
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .profile-image {
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .decorative-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-bg);
+            font-size: 1.2rem;
+        }
+
+        .popularity-badge {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, var(--primary-gold) 0%, var(--secondary-gold) 100%);
+            color: var(--dark-bg);
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 1200px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+                gap: 50px;
+                text-align: center;
+            }
+            
+            .profile-content {
+                padding-left: 0;
+                order: 2;
+            }
+            
+            .profile-image-section {
+                order: 1;
+            }
+            
+            .stats-container {
+                position: static;
+                flex-direction: row;
+                justify-content: center;
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .actor-name {
+                font-size: 3rem;
+            }
+            
+            .actor-title {
+                font-size: 2.5rem;
+            }
+            
+            .actor-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .fade-in-delay {
+            animation-delay: 0.3s;
+        }
+
+        .fade-in-delay-2 {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    {% endblock %}
+{% block content %}
+    <div class="main-container">
+        <div class="profile-grid">
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <div class="actor-category fade-in">{{ item.known_for_department }}</div>
+                <h1 class="actor-name fade-in fade-in-delay" id="actorName">{{ item.name }}</h1>
+    
+                <!-- Actor Details Grid -->
+                <div class="actor-details fade-in fade-in-delay-2">
+                    <div class="detail-item">
+                        <span class="detail-label">Place of Birth</span>
+                        <span class="detail-value" id="placeOfBirth">{{ item.place_of_birth }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Gender</span>
+                        <span class="detail-value" id="gender">{{ item.gender }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Birthday</span>
+                        <span class="detail-value" id="birthday">{{ item.birthday }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Popularity</span>
+                        <span class="detail-value" id="popularityScore">{{ item.popularity }}</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons fade-in fade-in-delay-2">
+                    <a href="{{ item.imdb_page }}" class="btn-custom btn-primary" id="imdbBtn">
+                        <i class="fab fa-imdb"></i>
+                        View on IMDb
+                    </a>
+                    <a href="{{ item.homepage }}" class="btn-custom btn-outline" id="homepageBtn">
+                        <i class="fas fa-globe"></i>
+                        Official Website
+                    </a>
+                </div>
+
+                <!-- Biography Section -->
+                <div class="biography-section fade-in fade-in-delay-2">
+                    <h3 class="biography-title">Biography</h3>
+                    <p class="biography-text" id="biography">
+                        {{ item.biography }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Profile Image Section -->
+            <div class="profile-image-section fade-in">
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="decorative-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <img src="{{ item.profile_path }}" alt="Actor Profile" class="profile-image" id="profileImage">
+                
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block script %}
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Sample actor data - replace with your actual data
+            const actorData = {
+                name: "Emma Stone",
+                profileImage: "/placeholder.svg?height=600&width=500",
+                popularity: 95.7,
+                placeOfBirth: "Scottsdale, Arizona, USA",
+                imdbPage: "https://www.imdb.com/name/nm1297015/",
+                homepage: "https://www.emmastone-official.com",
+                gender: "Female",
+                birthday: "November 6, 1988",
+                biography: "Emma Stone is an American actress known for her versatile performances in both comedic and dramatic roles. She gained recognition for her role in the comedy Superbad and has since become one of Hollywood's most sought-after actresses, winning an Academy Award for Best Actress for her performance in La La Land. Her natural charisma and ability to seamlessly transition between genres has made her one of the most respected performers of her generation."
+            };
+
+            // Function to populate actor data
+            function populateActorData(data) {
+                $('#actorName').text(data.name);
+                $('#profileImage').attr('src', data.profileImage).attr('alt', data.name + ' Profile');
+                $('#placeOfBirth').text(data.placeOfBirth);
+                $('#gender').text(data.gender);
+                $('#birthday').text(formatDate(data.birthday));
+                $('#popularityScore').text(data.popularity);
+                $('#biography').text(data.biography);
+                
+                // Set button links
+                $('#imdbBtn').attr('href', data.imdbPage);
+                $('#homepageBtn').attr('href', data.homepage);
+            }
+
+            // Format date function
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+
+            // Calculate age from birthday
+            function calculateAge(birthday) {
+                const today = new Date();
+                const birthDate = new Date(birthday);
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+
+            // Button click handlers
+            $('#imdbBtn').on('click', function(e) {
+                const href = $(this).attr('href');
+                if (href === '#' || !href) {
+                    e.preventDefault();
+                    showNotification('IMDb page not available', 'warning');
+                } else {
+                    showNotification('Opening IMDb page...', 'info');
+                }
+            });
+
+            $('#homepageBtn').on('click', function(e) {
+                const href = $(this).attr('href');
+                if (href === '#' || !href) {
+                    e.preventDefault();
+                    showNotification('Official website not available', 'warning');
+                } else {
+                    showNotification('Opening official website...', 'info');
+                }
+            });
+
+            // Notification function
+            function showNotification(message, type = 'info') {
+                $('.notification').remove();
+                
+                const notification = $(`
+                    <div class="notification" style="
+                        position: fixed;
+                        top: 30px;
+                        right: 30px;
+                        background: ${type === 'warning' ? '#f39c12' : '#3498db'};
+                        color: white;
+                        padding: 15px 25px;
+                        border-radius: 8px;
+                        z-index: 1000;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                        transform: translateX(100%);
+                        transition: transform 0.3s ease;
+                        font-weight: 500;
+                    ">
+                        ${message}
+                    </div>
+                `);
+                
+                $('body').append(notification);
+                
+                setTimeout(() => {
+                    notification.css('transform', 'translateX(0)');
+                }, 100);
+                
+                setTimeout(() => {
+                    notification.css('transform', 'translateX(100%)');
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+
+            // Parallax effect for profile image
+            $(window).on('scroll', function() {
+                const scrolled = $(this).scrollTop();
+                const parallax = scrolled * 0.1;
+                $('.profile-image').css('transform', `translateY(${parallax}px)`);
+            });
+
+            // Hover effects for stats
+            $('.stat-item').on('mouseenter', function() {
+                $(this).css({
+                    'transform': 'scale(1.05)',
+                    'background': 'rgba(212, 175, 55, 0.1)'
+                });
+            }).on('mouseleave', function() {
+                $(this).css({
+                    'transform': 'scale(1)',
+                    'background': 'rgba(0, 0, 0, 0.7)'
+                });
+            });
+
+            // Initialize with sample data
+            populateActorData(actorData);
+
+            // Add age to birthday display
+            const age = calculateAge(actorData.birthday);
+            $('#birthday').text(`${formatDate(actorData.birthday)} (Age ${age})`);
+
+            // Smooth scroll behavior
+            $('html').css('scroll-behavior', 'smooth');
+        });
+
+        // Function to update actor data (call this with your API data)
+        function updateActorProfile(newData) {
+            // Merge with existing data
+            const updatedData = { ...actorData, ...newData };
+            populateActorData(updatedData);
+        }
+    </script>
+    {% endblock %}

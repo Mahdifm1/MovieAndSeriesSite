@@ -280,3 +280,85 @@ async def search_tmdb_item_details_async(session, title='movie', v_type='movie')
         "rating": item_vote_average,
         "year": year,
     }
+
+
+def get_movie_details(movie_id):
+    """Get detailed information about a movie."""
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}"
+    params = {
+        'api_key': settings.TMDB_API_KEY,
+        'append_to_response': 'credits,videos,similar'
+    }
+    
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        movie_data = response.json()
+        
+        # Format the data
+        if movie_data.get('genres'):
+            movie_data['genres'] = [genre['name'] for genre in movie_data['genres']]
+        if movie_data.get('production_companies'):
+            movie_data['production_companies'] = [company['name'] for company in movie_data['production_companies']]
+        if movie_data.get('poster_path'):
+            movie_data['poster_path'] = f"https://image.tmdb.org/t/p/w500{movie_data['poster_path']}"
+        if movie_data.get('backdrop_path'):
+            movie_data['backdrop_path'] = f"https://image.tmdb.org/t/p/w500{movie_data['backdrop_path']}"
+            
+        return movie_data
+    except requests.RequestException as e:
+        print(f"Error fetching movie details: {e}")
+        return None
+
+def get_tv_details(series_id):
+    """Get detailed information about a TV series."""
+    url = f"https://api.themoviedb.org/3/tv/{series_id}"
+    params = {
+        'api_key': settings.TMDB_API_KEY,
+        'append_to_response': 'credits,videos,similar'
+    }
+    
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        series_data = response.json()
+        
+        # Format the data
+        if series_data.get('genres'):
+            series_data['genres'] = [genre['name'] for genre in series_data['genres']]
+        if series_data.get('networks'):
+            series_data['networks'] = [network['name'] for network in series_data['networks']]
+        if series_data.get('production_companies'):
+            series_data['production_companies'] = [company['name'] for company in series_data['production_companies']]
+        
+        return series_data
+    except requests.RequestException as e:
+        print(f"Error fetching TV series details: {e}")
+        return None
+
+
+def get_actor_details(actor_id):
+    url = f"https://api.themoviedb.org/3/person/{actor_id}"
+    params = {
+        'api_key': settings.TMDB_API_KEY,
+        'append_to_response': 'credits,images,external_ids'
+    }
+    
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        actor_data = response.json()
+        
+        # Format the data
+        if actor_data.get('gender') == 2:
+            gender = 'male'
+        elif actor_data.get('gender') == 1:
+            gender = 'female'
+        else:
+            gender = '-'
+    
+        return actor_data
+    except requests.RequestException as e:
+        print(f"Error fetching actor details: {e}")
+        return None
+

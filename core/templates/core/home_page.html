@@ -20,29 +20,31 @@
 
     <!-- Main content -->
     <div class="container">
-        {% if user.is_authenticated and ai_recommended_movies %}
-            <!-- AI-Recommended Movies Section -->
-            <section class="content-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="section-title">AI Recommended Movies</h2>
-                </div>
-                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
-                    {% for movie in ai_recommended_movies %}
-                        {% with item=movie item_type='movie' %}
-                            {% include 'core/partials/media_card.html' %}
-                        {% endwith %}
-                    {% endfor %}
-                </div>
-            </section>
+        {% if user.is_authenticated %}
+            {% if ai_recommended_movies %}
+                <!-- AI-Recommended Movies Section -->
+                <section class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="section-title">AI Recommended Movies</h2>
+                    </div>
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+                        {% for movie in ai_recommended_movies %}
+                            {% with item=movie item_type='movie' %}
+                                {% include 'core/partials/media_card.html' %}
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
 
-            {% if ai_recommended_shows %}
+            {% if ai_recommended_series %}
                 <!-- AI-Recommended TV Shows Section -->
                 <section class="content-section">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2 class="section-title">AI Recommended TV Shows</h2>
                     </div>
                     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
-                        {% for show in ai_recommended_shows %}
+                        {% for show in ai_recommended_series %}
                             {% with item=show item_type='tv' %}
                                 {% include 'core/partials/media_card.html' %}
                             {% endwith %}

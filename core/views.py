@@ -14,7 +14,8 @@ from django.urls import reverse
 from .tmdp_api import get_filtered_movies_and_series_list, get_filtered_actors_list, get_trending_actors_list, \
     search_tmdb_item_details_async, get_movie_details, get_tv_details, get_actor_details
 from .ai_api import send_prompt_to_ai
-from .models import UserLike, UserWatchlist
+from .models import UserLike, UserWatchlist, AIRecommendation
+from .tasks import update_ai_recommendations
 
 redis_client = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -41,28 +42,46 @@ class HomeView(View):
         
         # Add AI recommended movies and series if user is authenticated
         if request.user.is_authenticated:
-            try:
-                context['ai_recommended_movies'] = request.user.ai_recommended_movies
-            except (TypeError, AttributeError):
-                context['ai_recommended_movies'] = []
-                
-            try:
-                context['ai_recommended_series'] = request.user.ai_recommended_series
-            except (TypeError, AttributeError):
-                context['ai_recommended_series'] = []
+            # Get AI recommendations from database
+            ai_recommendations = AIRecommendation.objects.filter(user=request.user)
+            context['ai_recommended_movies'] = [
+                {
+                    'id': rec.item_id,
+                    'title': rec.item_title,
+                    'poster_path': rec.poster_path,
+                    'tmdb_rating': rec.tmdb_rating,
+                    'media_type': rec.item_type
+                }
+                for rec in ai_recommendations.filter(item_type='movie')
+            ]
+            context['ai_recommended_series'] = [
+                {
+                    'id': rec.item_id,
+                    'title': rec.item_title,
+                    'poster_path': rec.poster_path,
+                    'tmdb_rating': rec.tmdb_rating,
+                    'media_type': rec.item_type
+                }
+                for rec in ai_recommendations.filter(item_type='tv')
+            ]
+            print("Debug - AI Recommendations:")
+            print(f"Movies: {context['ai_recommended_movies']}")
+            print(f"Series: {context['ai_recommended_series']}")
 
-        for list_items in ['ai_recommended_movies', 'ai_recommended_series', 'latest_movies', 'latest_series', 'trending_now']:
-            for item in context[list_items]:
-                item_id = item.get('id')
-                if UserLike.objects.filter(user=request.user, item_id=item_id).exists():
-                    item['is_liked'] = True
-                else:
-                    item['is_liked'] = False
-                
-                if UserWatchlist.objects.filter(user=request.user, item_id=item_id).exists():
-                    item['in_watchlist'] = True
-                else:
-                    item['in_watchlist'] = False
+        # Add like and watchlist status for all items
+        if request.user.is_authenticated:
+            for list_items in ['ai_recommended_movies', 'ai_recommended_series', 'latest_movies', 'latest_series', 'trending_now']:
+                for item in context.get(list_items, []):
+                    item_id = item.get('id')
+                    if UserLike.objects.filter(user=request.user, item_id=item_id).exists():
+                        item['is_liked'] = True
+                    else:
+                        item['is_liked'] = False
+                    
+                    if UserWatchlist.objects.filter(user=request.user, item_id=item_id).exists():
+                        item['in_watchlist'] = True
+                    else:
+                        item['in_watchlist'] = False
         
         return render(request, 'core/home_page.html', context)
 
@@ -158,7 +177,6 @@ class AiDiscoveryView(View):
 
         try:
             prompt = json.loads(request.body.decode('utf-8')).get('prompt')
-            print(f"Received prompt from user: {prompt}")
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON payload."}, status=400)
 
@@ -166,7 +184,6 @@ class AiDiscoveryView(View):
             return JsonResponse({"error": "Invalid input. Expected JSON string."}, status=400)
 
         ai_response_string = send_prompt_to_ai(prompt.strip())
-        print(f"Raw response from AI: {ai_response_string}")
 
         if not ai_response_string:
             return JsonResponse({"error": "Failed to get response from AI. Please try again later."}, status=502)
@@ -175,10 +192,7 @@ class AiDiscoveryView(View):
             ai_suggestions_dict = ast.literal_eval(ai_response_string.strip())
             if not isinstance(ai_suggestions_dict, dict):
                 raise ValueError("AI response was not a dictionary after parsing.")
-            print(f"Parsed AI suggestions: {ai_suggestions_dict}")  # لاگ کردن دیکشنری پارس شده
         except (ValueError, SyntaxError) as e:
-            print(f"Error converting AI response string to dictionary: {e}")
-            print(f"AI response string was: {ai_response_string}")
             return JsonResponse({"error": "AI response format was invalid. Could not parse the suggestions."},
                                 status=502)
 
@@ -353,7 +367,7 @@ class ToggleLikeView(LoginRequiredMixin, View):
         
         if not item_id or item_type not in ['movie', 'tv'] or not item_title:
             return JsonResponse({'error': 'Invalid request'}, status=400)
-        print(item_id, item_type, item_title)
+
         try:
             like_obj = UserLike.objects.get(
                 user=request.user,
@@ -370,9 +384,9 @@ class ToggleLikeView(LoginRequiredMixin, View):
                 item_title=item_title
             )
             is_liked = True
-            # Trigger AI recommendations update
-            from .tasks import update_ai_recommendations
-            update_ai_recommendations.delay(request.user.id)
+
+        # Trigger AI recommendations update
+        task = update_ai_recommendations.delay(request.user.id)
         
         return JsonResponse({'is_liked': is_liked})
 

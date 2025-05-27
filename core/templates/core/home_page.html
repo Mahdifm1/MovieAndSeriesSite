@@ -20,378 +20,76 @@
 
     <!-- Main content -->
     <div class="container">
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and ai_recommended_movies %}
             <!-- AI-Recommended Movies Section -->
-            <!-- Replace the AI Recommended Movies Section with grid layout -->
             <section class="content-section">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="section-title">AI Recommended Movies</h2>
                 </div>
-                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="moviesContainer">
-                    <!-- Movie items -->
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg"
-                                     alt="Inception" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="3" data-type="movie">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="3" data-type="movie">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Inception</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.7</span>
-                                </div>
-                                <div class="media-year">2010</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_.jpg"
-                                     alt="Avengers: Endgame" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="1" data-type="movie">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="1" data-type="movie">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Avengers: Endgame</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.8</span>
-                                </div>
-                                <div class="media-year">2019</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BMTFkZjE4NGUtMDVkMy00YWY0LWE2YTgtYjM0MmVlMzdjZWI5XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg"
-                                     alt="The Last of Us" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="4" data-type="movie">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="4" data-type="movie">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">The Dark Knight</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.8</span>
-                                </div>
-                                <div class="media-year">2008</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg"
-                                     alt="Dune" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="5" data-type="movie">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="5" data-type="movie">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Dune</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.6</span>
-                                </div>
-                                <div class="media-year">2021</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_.jpg"
-                                     alt="Avatar: The Way of Water" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="5" data-type="movie">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="5" data-type="movie">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Avatar: The Way of Water</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.5</span>
-                                </div>
-                                <div class="media-year">2022</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+                    {% for movie in ai_recommended_movies %}
+                        {% with item=movie item_type='movie' %}
+                            {% include 'core/partials/media_card.html' %}
+                        {% endwith %}
+                    {% endfor %}
                 </div>
             </section>
 
-            <!-- Replace the AI Recommended TV Shows Section with grid layout -->
-            <section class="content-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="section-title">AI Recommended TV Shows</h2>
-                </div>
-                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="showsContainer">
-                    <!-- TV Show items -->
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BODk4ZjU0NDUtYjdlOS00OTljLTgwZTUtYjkyZjk1NzExZGU3XkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg"
-                                     alt="Succession" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="101" data-type="tvshow">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="101" data-type="tvshow">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Succession</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.9</span>
-                                </div>
-                                <div class="media-year">2018</div>
-                            </div>
-                        </div>
+            {% if ai_recommended_shows %}
+                <!-- AI-Recommended TV Shows Section -->
+                <section class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="section-title">AI Recommended TV Shows</h2>
                     </div>
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BNDVkYjU0MzctMWRmZi00NTkxLTgwZWEtOWVhYjZlYjllYmU4XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_.jpg"
-                                     alt="Friends" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="102" data-type="tvshow">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="102" data-type="tvshow">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Friends</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.7</span>
-                                </div>
-                                <div class="media-year">1994</div>
-                            </div>
-                        </div>
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+                        {% for show in ai_recommended_shows %}
+                            {% with item=show item_type='tv' %}
+                                {% include 'core/partials/media_card.html' %}
+                            {% endwith %}
+                        {% endfor %}
                     </div>
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BMTg1ODEzMjc1Ml5BMl5BanBnXkFtZTgwMTMxNzQ3MDE@._V1_.jpg"
-                                     alt="Breaking Bad" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="103" data-type="tvshow">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="103" data-type="tvshow">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Breaking Bad</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.8</span>
-                                </div>
-                                <div class="media-year">2008</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg"
-                                     alt="Game of Thrones" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="104" data-type="tvshow">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="104" data-type="tvshow">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Game of Thrones</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.7</span>
-                                </div>
-                                <div class="media-year">2011</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_.jpg"
-                                     alt="Squid Game" class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="105" data-type="tvshow">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="105" data-type="tvshow">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">Squid Game</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>4.6</span>
-                                </div>
-                                <div class="media-year">2021</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                </section>
+            {% endif %}
         {% endif %}
-        <!-- Replace the Latest Releases Section with grid layout -->
+
+        <!-- Latest Movies Section -->
         <section class="content-section">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="section-title">Latest Releases</h2>
+                <h2 class="section-title">Latest Movies</h2>
             </div>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="latestContainer">
-                <!-- Latest release items -->
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
                 {% for movie in latest_movies %}
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="{{ movie.poster_path }}"
-                                     alt="{{ movie.title }}" class="media-poster"
-                                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="{{ movie.id }}" data-type="movie">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="{{ movie.id }}" data-type="movie">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                                <span class="badge bg-primary position-absolute"
-                                      style="top: 10px; left: 10px;">NEW</span>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">{{ movie.title }}</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>{{ movie.tmdb_rating }}</span>
-                                </div>
-                                <div class="media-year">{{ movie.release_date|slice:":4" }}</div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </section>
-        <!-- Replace the Latest Releases Section with grid layout -->
-        <section class="content-section">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="section-title">Latest Releases series</h2>
-            </div>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="latestContainer">
-                <!-- Latest release items -->
-                {% for series in latest_series %}
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="{{ series.poster_path }}"
-                                     alt="{{ series.title }}" class="media-poster"
-                                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="{{ series.id }}" data-type="movie">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="{{ series.id }}"
-                                            data-type="movie">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                                <span class="badge bg-primary position-absolute"
-                                      style="top: 10px; left: 10px;">NEW</span>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">{{ series.title }}</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>{{ series.tmdb_rating }}</span>
-                                </div>
-                                <div class="media-year">{{ series.release_date|slice:":4" }}</div>
-                            </div>
-                        </div>
-                    </div>
+                    {% with item=movie item_type='movie' %}
+                        {% include 'core/partials/media_card.html' %}
+                    {% endwith %}
                 {% endfor %}
             </div>
         </section>
 
+        <!-- Latest TV Shows Section -->
+        <section class="content-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title">Latest TV Shows</h2>
+            </div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+                {% for show in latest_series %}
+                    {% with item=show item_type='tv' %}
+                        {% include 'core/partials/media_card.html' %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </section>
 
         <!-- Trending Now Section -->
         <section class="content-section">
-            <h2 class="section-title">Trending Now</h2>
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="trendingContainer">
-                <!-- Trending items -->
-                {% for trend in trending_now %}
-                    <div class="col">
-                        <div class="media-card">
-                            <div class="position-relative">
-                                <img src="{{ trend.poster_path }}" alt="{{ trend.poster_path }}"
-                                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';"
-                                     class="media-poster">
-                                <div class="media-actions">
-                                    <button class="action-btn like-btn" data-id="{{ trend.id }}" data-type="movie">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                    <button class="action-btn watchlist-btn" data-id="{{ trend.id }}" data-type="movie">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="media-info">
-                                <h3 class="media-title">{{ trend.title }}</h3>
-                                <div class="media-rating">
-                                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                    <span>{{ trend.tmdb_rating }}</span>
-                                </div>
-                                <div class="media-year">{{ trend.release_date|slice:":4" }}</div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title">Trending Now</h2>
+            </div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+                {% for item in trending_now %}
+                    {% with item=item item_type='-' %}
+                        {% include 'core/partials/media_card.html' %}
+                    {% endwith %}
                 {% endfor %}
             </div>
         </section>
@@ -448,10 +146,9 @@
     </div>
 {% endblock %}
 
-
-
 {% block scripts %}
     <!-- Scripts -->
     <script src="{% static 'js/carousel.js' %}"></script>
     <script src="{% static 'js/ai-discovery-feature.js' %}"></script>
+
 {% endblock %}

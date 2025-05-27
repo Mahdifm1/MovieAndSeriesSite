@@ -13,8 +13,7 @@
                     <div class="col-md-2 col-6">
                         <label for="typeFilter" class="form-label">Type</label>
                         <select name="v_type" class="form-select" id="typeFilter">
-                            <option {% if query_params.v_type == 'movies' %}selected{% endif %} value="movie">Movies
-                            </option>
+                            <option {% if query_params.v_type == 'movies' %}selected{% endif %} value="movie">Movies</option>
                             <option {% if query_params.v_type == 'tv' %}selected{% endif %} value="tv">TV Shows</option>
                         </select>
                     </div>
@@ -127,37 +126,14 @@
                 </div>
             </div>
 
-            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3" id="browseResults">
-                {% for filtered in filtered_movie_and_series_list %}
-                    <div class="media-card">
-                        <div class="position-relative">
-                            <img src="{{ filtered.poster_path }}" alt="{{ filtered.title }}" class="media-poster"
-                                 onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';">
-                            <div class="media-actions">
-                                <button class="action-btn like-btn" data-id="{{ filtered.id }}" data-type="">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                                <button class="action-btn watchlist-btn" data-id="{{ filtered.id }}" data-type="">
-                                    <i class="bi bi-plus-lg"></i>
-                                </button>
-                            </div>
-                            {% if filtered.release_date|slice:":4" == '2025' %}
-                                <span class="badge bg-primary position-absolute"
-                                      style="top: 10px; left: 10px;">NEW</span>
-                            {% endif %}
-                        </div>
-                        <div class="media-info">
-                            <h3 class="media-title">{{ filtered.title }}</h3>
-                            <div class="media-rating">
-                                <span class="rating-star"><i class="bi bi-star-fill"></i></span>
-                                <span>{{ filtered.tmdb_rating }}</span>
-                            </div>
-                            <div class="media-year">{{ filtered.release_date|slice:":4" }}</div>
-                        </div>
-                    </div>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+                {% for item in filtered_movie_and_series_list %}
+                    {% with item_type=query_params.v_type show_new_badge=False %}
+                        {% include 'core/partials/media_card.html' %}
+                    {% endwith %}
                 {% endfor %}
             </div>
-            {% include 'core/paginator.html' %}
+            {% include 'core/partials/paginator.html' %}
         </div>
     </div>
 {% endblock %}

@@ -1,0 +1,39 @@
+<div class="col">
+    <div class="media-card">
+        <div class="position-relative">
+            <a href="{% if item_type == 'movie' %}{% url 'movie_detail' item.id %}{% elif item_type == 'tv' %}{% url 'series_detail' item.id %}{% else %}{% if item.media_type == 'movie' %}{% url 'movie_detail' item.id %}{% elif item.media_type == 'tv' %}{% url 'series_detail' item.id %}{% endif %}{% endif %}" class="media-card-link">
+                <img src="{{ item.poster_path }}" 
+                     alt="{{ item.title }}" 
+                     class="media-poster"
+                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';">
+            </a>
+            <div class="media-actions">
+                <button class="action-btn like-btn" 
+                        data-id="{{ item.id }}" 
+                        data-type="{{ item_type }}"
+                        onclick="event.preventDefault(); event.stopPropagation();">
+                    <i class="bi bi-heart{% if item.is_liked %}-fill{% endif %}"></i>
+                </button>
+                <button class="action-btn watchlist-btn" 
+                        data-id="{{ item.id }}" 
+                        data-type="{{ item_type }}"
+                        onclick="event.preventDefault(); event.stopPropagation();">
+                    <i class="bi bi-plus-lg{% if item.in_watchlist %}-circle-fill{% endif %}"></i>
+                </button>
+            </div>
+            {% if show_new_badge %}
+                <span class="badge bg-primary position-absolute" style="top: 10px; left: 10px;">NEW</span>
+            {% endif %}
+        </div>
+        <a href="{% if item_type == 'movie' %}{% url 'movie_detail' item.id %}{% elif item_type == 'tv' %}{% url 'series_detail' item.id %}{% else %}{% if item.media_type == 'movie' %}{% url 'movie_detail' item.id %}{% elif item.media_type == 'tv' %}{% url 'series_detail' item.id %}{% endif %}{% endif %}" class="media-card-link">
+            <div class="media-info">
+                <h3 class="media-title">{{ item.title }}</h3>
+                <div class="media-rating">
+                    <span class="rating-star"><i class="bi bi-star-fill"></i></span>
+                    <span>{{ item.tmdb_rating|floatformat:1 }}</span>
+                </div>
+                <div class="media-year">{{ item.release_date|slice:":4" }}</div>
+            </div>
+        </a>
+    </div>
+</div> 

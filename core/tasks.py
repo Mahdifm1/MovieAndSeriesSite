@@ -4,7 +4,7 @@ import aiohttp
 from celery import shared_task
 from redis import Redis
 from django.conf import settings
-from .tmdp_api import *
+from .tmbd_api import *
 from .models import UserLike, AIRecommendation
 from .ai_api import send_prompt_to_ai
 from django.contrib.auth import get_user_model

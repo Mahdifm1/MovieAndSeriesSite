@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 
-from .tmdp_api import get_filtered_movies_and_series_list, get_filtered_actors_list, get_trending_actors_list, \
+from .tmbd_api import get_filtered_movies_and_series_list, get_filtered_actors_list, get_trending_actors_list, \
     search_tmdb_item_details_async, get_movie_details, get_tv_details, get_actor_details
 from .ai_api import send_prompt_to_ai
 from .models import UserLike, UserWatchlist, AIRecommendation
